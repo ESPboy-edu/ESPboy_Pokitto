@@ -1,0 +1,17 @@
+{
+    "name": "Pokitto",
+    "keywords": "Pokitto, game",
+    "description": "An alternative library for Pokitto content recompilation on the ESPboy platform ",
+    "repository":
+    {
+        "type": "",
+        "url": ""
+    },
+    "version": "1.0.0",
+    "export":
+    {
+        "exclude": "extras"
+    },
+    "frameworks": "ESPboy",
+    "platforms": "esp8266"
+}
