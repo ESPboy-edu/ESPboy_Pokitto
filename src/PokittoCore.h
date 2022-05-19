@@ -189,7 +189,7 @@ public:
     static void readSettings();
     static void titleScreen(const char* name, const uint8_t *logo);
     static void titleScreen(const char* name);
-	  static void titleScreen(const uint8_t* logo);
+    static void titleScreen(const uint8_t* logo);
     static void titleScreen();
     static uint32_t frameCount;
     static void pickRandomSeed();

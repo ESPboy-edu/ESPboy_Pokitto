@@ -178,7 +178,7 @@ uint8_t Display::width = LCDWIDTH;
 uint8_t Display::height = LCDHEIGHT;
 
 #if PROJ_SCREENMODE != TASMODE
-uint8_t __attribute__ ((aligned)) Display::screenbuffer[POK_SCREENBUFFERSIZE]; // maximum resolution
+//uint8_t __attribute__ ((aligned)) Display::screenbuffer[POK_SCREENBUFFERSIZE]; // maximum resolution
 #endif // TASMODE
 
 uint16_t Display::getWidth() {
@@ -621,6 +621,9 @@ void Display::drawBitmap(int16_t x, int16_t y, const uint8_t * bitmap, uint8_t f
 
 void Display::drawBitmap(int16_t x, int16_t y, const uint8_t* bitmap)
 {
+    if (bitmap == NULL){
+       Serial.println("NULLPRTR! in PokittoDisplay.cpp line 630 drawBitmapData(x, y, w, h, bitmap)");
+       return;}
     int16_t w = *bitmap;
     int16_t h = *(bitmap + 1);
     //add an offset to the pointer to start after the width and height
@@ -630,6 +633,7 @@ void Display::drawBitmap(int16_t x, int16_t y, const uint8_t* bitmap)
 
 void Display::drawBitmapData(int16_t x, int16_t y, int16_t w, int16_t h, const uint8_t* bitmap) {
     /** visibility check */
+    if (bitmap == NULL) return;
     if (y<-h || y>=height) return; //invisible
     if (x<-w || x>=width) return;  //invisible
     if (m_colordepth==2) drawBitmapData2BPP(x, y, w, h, bitmap);
