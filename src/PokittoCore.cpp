@@ -153,7 +153,7 @@ void Core::showLogo() {
 
 
 void Core::wait(uint16_t tme){
-delay(tme*1000);
+delay(tme);
 }
 
 
