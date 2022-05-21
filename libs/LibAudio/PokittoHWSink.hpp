@@ -1,0 +1,87 @@
+#pragma once
+
+namespace Audio {
+
+    inline void setVolume(u32 v){
+        v = 255 - (192 - v) * (192 - v) * 255 / 36864;
+        u32 hwVolume = v ? (v>>1) | 0xF : 0;
+        u32 swVolume = v ? (v | 0xF) + 1 : 0;
+        SoftwareI2C(P0_4, P0_5).write(0x5e, hwVolume);
+	SoftwareI2C(P0_5, P0_4).write(0x5e, hwVolume); // fix for newer boards with i2C right way around
+        audio_volume = swVolume;
+    }
+
+    inline void mix(void *dst, const void* src, std::size_t count) {
+        u8 *buffer = static_cast<u8*>(dst);
+        const u8 *tmp = static_cast<const u8*>(src);
+        for(u32 i=0; i<count; ++i){
+            s32 v = s32(buffer[i]) + s32(tmp[i]) - 128;
+            if(v < 0) v = 0;
+            else if(v > 0xFF) v = 0xFF;
+            buffer[i] = v;
+        }
+    }
+
+    template <u32 channelCount, u32 sampleRate>
+    class Sink : public BaseSink<Sink<channelCount, sampleRate>, channelCount> {
+        static constexpr u32 TIMER_32_0_IRQn = 18;
+        void enableDAC() {
+          noInterrupts();
+          sigmaDeltaSetup(0, 48000);
+          sigmaDeltaAttachPin(D3);
+          sigmaDeltaEnable();
+          timer1_attachInterrupt(byteBeatStepISR);
+          timer1_enable(TIM_DIV1, TIM_EDGE, TIM_LOOP);
+          timer1_write(80000000 / sampleRate * 2);
+          interrupts(); 
+        }
+
+         static IRAM_ATTR IRQ(void){
+            static u8 lastByte = 128;
+            auto currentBuffer = audio_playHead >> 9;
+            if(!audio_state[currentBuffer])
+                return lastByte;
+
+            lastByte = audio_buffer[audio_playHead];
+            audio_playHead++;
+
+            auto nextBuffer = audio_playHead >> 9;
+
+            if(currentBuffer != nextBuffer){
+                audio_state[currentBuffer] = 0;
+                if(nextBuffer == bufferCount){
+                    audio_playHead = 0;
+                }
+            }
+
+            sigmaDeltaWrite(0, lastByte);// lastByte * audio_volume >> 8;
+        }
+
+
+    public:
+        void init(){
+            if(this->wasInit)
+                return;
+            this->wasInit = true;
+
+            this->channels[0].source =
+                +[](u8 *buffer, void *ptr){
+                     memset(buffer, 128, 512);
+                 };
+
+            for(int i=1; i<channelCount; ++i){
+                this->channels[i].source = nullptr;
+            }
+
+            for(int i=0; i<bufferCount; ++i){
+                audio_state[i] = 0;
+            }
+            audio_playHead = 0;
+
+            memset(audio_buffer, 128, 1024);
+            enableDAC();
+        }
+
+        Sink() = default;
+    };
+}
