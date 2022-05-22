@@ -63,48 +63,105 @@
 
 #include "PokittoCore.h"
 #include "PokittoSound.h"
-#include "ESPboyInit.h"
 
-extern ESPboyInit myESPboy;
+#if (POK_ENABLE_SYNTH == 1)
+#include "../libs/Synth/Synth.h"
+#endif
 
 using namespace Pokitto;
+
+#include "../libs/LibAudio/LibAudio.h"
+
+Audio::Sink<NUM_CHANNELS, POK_AUD_FREQ> audioSink;
 
 /** discrete hardware volume control **/
 static const uint8_t discrete_vol_levels[] = {0,32,64,96,128,160,192,224};
 
 void Sound::begin(){
-    //Audio::setVolume(globalVolume);
+    Audio::setVolume(globalVolume);
 }
 
 void Sound::volumeUp() {
     if (discrete_vol<7) discrete_vol++;
-    setVolume(discrete_vol_levels[discrete_vol]);}
+    setVolume(discrete_vol_levels[discrete_vol]);
+}
 
 void Sound::volumeDown() {
     if (discrete_vol) discrete_vol--;
-    setVolume(discrete_vol_levels[discrete_vol]);}
-
-void Sound::playSFX( const uint8_t *sfx, uint32_t length ){}
-
-void Sound::playSFX4bit( const uint8_t *sfx, uint32_t length ){}
-
-int Sound::playMusicStream(const char* filename){return 0;//Audio::play<0>(filename) != nullptr;
+    setVolume(discrete_vol_levels[discrete_vol]);
 }
 
-int Sound::playMusicStream(){return 1;}
+void Sound::playSFX( const uint8_t *sfx, uint32_t length ){
+    Audio::SFX8Source::play<1>(sfx, length);
+}
 
-void Sound::pauseMusicStream(){}
+void Sound::playSFX4bit( const uint8_t *sfx, uint32_t length ){
+    // to-do: implement SFX4Source
+    // Audio::SFX4Source::play<1>(sfx, length);
+}
 
-uint32_t Sound::getMusicStreamElapsedSec(){return 0;}
+int Sound::playMusicStream(const char* filename){
+    return Audio::play<0>(filename) != nullptr;
+}
 
-uint32_t Sound::getMusicStreamElapsedMilliSec(){return 0;}
+int Sound::playMusicStream(){
+    auto& inst = Audio::RAWFileSource::getSourceInstance<0>();
+    inst.setPaused(false);
+    return 1;
+}
 
-void Sound::playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmode){}
+void Sound::pauseMusicStream(){
+    auto& inst = Audio::RAWFileSource::getSourceInstance<0>();
+    inst.setPaused(true);
+}
 
-void Sound::playTone(uint8_t os, uint16_t frq, uint8_t volume, uint32_t duration){
-  myESPboy.playTone(frq, duration);
+uint32_t Sound::getMusicStreamElapsedSec(){
+    auto& inst = Audio::RAWFileSource::getSourceInstance<0>();
+    return inst.getPosition() / POK_AUD_FREQ;
+}
+
+uint32_t Sound::getMusicStreamElapsedMilliSec(){
+    auto& inst = Audio::RAWFileSource::getSourceInstance<0>();
+    return inst.getPosition() * 1000 / POK_AUD_FREQ;
+}
+
+#if (POK_ENABLE_SYNTH == 1)
+void Sound::playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmode)
+{
+    if (wav>MAX_WAVETYPES) wav=0;
+    if (arpmode>MAX_ARPMODE) arpmode=MAX_ARPMODE;
+    if (os==1) setOSC(&osc1,1,wav,1,0,0,frq,amp,0,0,0,0,0,0,arpmode,0,0);
+    else if (os==2) setOSC(&osc2,1,wav,1,0,0,frq,amp,0,0,0,0,0,0,arpmode,0,0);
+    else if (os==3) setOSC(&osc3,1,wav,1,0,0,frq,amp,0,0,0,0,0,0,arpmode,0,0);
+}
+
+
+void Sound::playTone(uint8_t os, uint16_t frq, uint8_t volume, uint32_t duration)
+{
+    if (os==1) setOSC(&osc1,1,WSQUARE,frq,volume,duration);
+    else if (os==2) setOSC(&osc2,1,WTRI,frq,volume,duration);
+    else if (os==3) setOSC(&osc3,1,WTRI,frq,volume,duration);
 }
 
 void Sound::loadSampleToOsc(uint8_t os, uint8_t* data, uint32_t datasize) {
+    OSC* o;
+    if (os==3) o = &osc3;
+    else if (os==2) o = &osc2;
+    else o = &osc1;
+    o->sample = data;
+    o->samplelength = datasize;
+    o->samplepos = 0;
 }
 
+#else
+void Sound::playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmode)
+{
+    tone(D3, frq);
+}
+
+
+void Sound::playTone(uint8_t os, uint16_t frq, uint8_t volume, uint32_t duration)
+{
+    tone(D3, frq, duration);
+}
+#endif

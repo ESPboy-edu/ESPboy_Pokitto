@@ -44,6 +44,31 @@
 #define POK_AUD_FREQ 16000
 
 
+/** SOND CONFIGURATION **/
+#ifndef PROJ_ENABLE_SOUND
+    #define POK_ENABLE_SOUND 1
+#else
+    #define POK_ENABLE_SOUND PROJ_ENABLE_SOUND
+#endif
+
+#ifndef PROJ_SOUND_BUFFERED
+    #define POK_SOUND_BUFFERED 0
+#else
+    #define POK_SOUND_BUFFERED PROJ_SOUND_BUFFERED
+#endif
+
+#ifndef NUM_CHANNELS
+    #define NUM_CHANNELS 2
+#endif
+
+#ifndef PROJ_ENABLE_SYNTH
+    #define POK_ENABLE_SYNTH 0
+#else
+    #define POK_ENABLE_SYNTH PROJ_ENABLE_SYNTH
+#endif // PROJ_ENABLE_SYNTH
+
+
+
 /** SCREEN CONFIGURATION **/
 #define PROJ_PERSISTENCE true
 inline constexpr bool POK_PERSISTENCE = PROJ_PERSISTENCE;
