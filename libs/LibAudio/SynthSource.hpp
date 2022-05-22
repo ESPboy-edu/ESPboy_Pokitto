@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Synth.h"
+#include "../Synth/Synth.h"
 
 namespace Audio {
 

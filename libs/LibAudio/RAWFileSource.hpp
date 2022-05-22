@@ -1,7 +1,8 @@
 #pragma once
 
-#include <new>
-#include <File>
+//#include <new>
+//#include <File>
+#include<LittleFS.h>
 
 #define ALIGNED __attribute__ ((aligned))
 #define NAKED __attribute__((naked))
@@ -20,7 +21,7 @@ namespace Audio {
         static void copy(u8 *buffer, void*ptr){
             auto& sd = *reinterpret_cast<RAWFileSource*>(ptr);
             if(sd.paused || (sd.offset - sd.start) >= sd.length){
-                MemOps::set(buffer, 127, 512);
+                memset(buffer, 127, 512);
                 return;
             }
             s32 rem = 512;
@@ -61,7 +62,7 @@ namespace Audio {
                 if((sd.offset - sd.start) >= sd.length && sd.loop){
                     sd.offset = sd.start;
                 } else {
-                    MemOps::set(tmp, 127, rem);
+                    memset(tmp, 127, rem);
                     rem = 0;
                 }
             }
@@ -79,7 +80,7 @@ namespace Audio {
         static RAWFileSource &play(File& fileRef, u32 length){
             auto& sd = getSourceInstance<channel>();
             sd.file = &fileRef;
-            sd.offset = fileRef.tell();
+            sd.offset = fileRef.position();
             sd.start = sd.offset;
             sd.length = length;
             sd.loop = true;
@@ -97,7 +98,7 @@ namespace Audio {
             }
 
             File& file = *reinterpret_cast<File*>(ram);
-            if(file.openRO(name)){
+            if( LittleFS.open(name, "r")){
                 return &play<channel>(file, file.size());
             } else {
                 Audio::stop<channel>();

@@ -8,8 +8,8 @@ namespace Audio {
         static void copy(u8 *buffer, void *ptr){
             auto& state = *reinterpret_cast<SFX8Source*>(ptr);
             u32 len = std::min<u32>(512, state.len);
-            MemOps::copy(buffer, state.head, len);
-            MemOps::set(buffer + len, 127, 512 - len);
+            memcpy(buffer, state.head, len);
+            memset(buffer + len, 127, 512 - len);
             state.head += len;
             state.len -= len;
         }

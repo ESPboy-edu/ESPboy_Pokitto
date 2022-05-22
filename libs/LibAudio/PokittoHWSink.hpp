@@ -1,14 +1,9 @@
 #pragma once
+#include<sigma_delta.h>
 
 namespace Audio {
 
     inline void setVolume(u32 v){
-        v = 255 - (192 - v) * (192 - v) * 255 / 36864;
-        u32 hwVolume = v ? (v>>1) | 0xF : 0;
-        u32 swVolume = v ? (v | 0xF) + 1 : 0;
-        SoftwareI2C(P0_4, P0_5).write(0x5e, hwVolume);
-	SoftwareI2C(P0_5, P0_4).write(0x5e, hwVolume); // fix for newer boards with i2C right way around
-        audio_volume = swVolume;
     }
 
     inline void mix(void *dst, const void* src, std::size_t count) {
@@ -30,18 +25,20 @@ namespace Audio {
           sigmaDeltaSetup(0, 48000);
           sigmaDeltaAttachPin(D3);
           sigmaDeltaEnable();
-          timer1_attachInterrupt(byteBeatStepISR);
+          timer1_attachInterrupt(IRQ);
           timer1_enable(TIM_DIV1, TIM_EDGE, TIM_LOOP);
           timer1_write(80000000 / sampleRate * 2);
           interrupts(); 
         }
 
-         static IRAM_ATTR IRQ(void){
+         static void IRAM_ATTR IRQ(void){
             static u8 lastByte = 128;
             auto currentBuffer = audio_playHead >> 9;
-            if(!audio_state[currentBuffer])
-                return lastByte;
-
+            if(!audio_state[currentBuffer]){
+              sigmaDeltaWrite(0, lastByte);
+              return;
+            }
+                
             lastByte = audio_buffer[audio_playHead];
             audio_playHead++;
 
