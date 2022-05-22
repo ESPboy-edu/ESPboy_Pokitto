@@ -21,7 +21,7 @@
 #include "Pokitto.h"
 #include "Synth.h"
 #include "Pokitto_settings.h"
-
+/*
 #define PROGMEM
     #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
     #ifndef WIN32
@@ -31,6 +31,7 @@
     #else
     #define pgm_read_word(addr) (*(const unsigned int *)(addr))
     #endif // WIN32
+*/
 
 // http://www.arklyffe.com/main/2010/08/29/xorshift-pseudorandom-number-generator/
 static uint8_t y8 = 1;

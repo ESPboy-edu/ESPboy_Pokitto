@@ -35,6 +35,13 @@
 /**************************************************************************/
 
 #include "Synth.h"
+#include "Synth_wavefuncs.cpp"
+#include "Synth_helpers.cpp"
+
+extern uint16_t noiseval;
+
+extern uint8_t xorshift8(void);
+extern uint16_t xorshift16(void);
 
 /** OSCILLATOR FUNCTIONS **/
 
@@ -61,7 +68,7 @@ void setOSC(OSC* o,uint8_t on=1, uint8_t wave=1, uint8_t loop=0, uint8_t echo=0,
   } else o->arpmode = 0;
   o->arpstep = 0;
   o->count = 0;
-  noiseval = xorshift16(); //random(0,0xFFFF);
+  noiseval = xorshift16();
 
   o->cinc = cincs[notenumber]; // direct cinc from table, no calculation
   o->tonic = notenumber; // save tonic for arpeggio use
@@ -115,7 +122,7 @@ void setOSC(OSC* o,uint8_t on, uint8_t wave, uint16_t frq, uint8_t volume, uint3
   o->adsrphase = 0;//1;
   o->arpmode = 0;
   o->count = 0;
-  noiseval = xorshift16(); //random(0,0xFFFF);
+  noiseval = xorshift16();
   o->cinc = ((float)0xFFFFFFFF/(float)POK_AUD_FREQ)*frq;
   if (wave == 2) o->cinc >>= 1; // correct pitch for saw wave
   if (wave == 4) o->cinc <<= 1; // enable higher pitch for pure noise

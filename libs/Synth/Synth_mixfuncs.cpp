@@ -34,7 +34,7 @@
 */
 /**************************************************************************/
 
-#include "PokittoGlobs.h"
+//#include "PokittoGlobs.h"
 #include "Synth.h"
 
 /** MIXING FUNCTIONS **/
