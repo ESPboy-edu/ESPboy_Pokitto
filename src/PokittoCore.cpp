@@ -42,13 +42,12 @@
 #include "PokittoLogos.h"
 #include <stdlib.h>
 //#include <LittleFS.h>
-#include <ESP_EEPROM.h>
-#include "ESPboyInit.h"
+//#include "ESPboyInit.h"
 //#include "ESPboyTerminalGUI.h"
 //#include "ESPboyOTA2.h"
 
 
-ESPboyInit myESPboy;
+//ESPboyInit myESPboy;
 //ESPboyTerminalGUI *terminalGUIobj = NULL;
 //ESPboyOTA2 *OTA2obj = NULL;
 
@@ -56,18 +55,12 @@ ESPboyInit myESPboy;
 
 using namespace Pokitto;
 
+void (*Core::updateHook)(bool) = +[](bool){};
+
 bool Core::run_state; // this definition needed
 
-//GB Related
-uint8_t Core::startMenuTimer;
 uint8_t Core::timePerFrame;
-uint32_t Core::nextFrameMillis;
 uint32_t Core::frameCount;
-const char* Core::popupText;
-uint8_t Core::popupTimeLeft;
-uint16_t Core::frameDurationMicros;
-uint32_t Core::frameStartMicros, Core::frameEndMicros;
-//uint8_t Core::volbar_visible=0;
 
 /** Components */
 Buttons Core::buttons;
@@ -78,23 +71,19 @@ extern uint8_t *Display::screenbuffer;
 
 void Core::begin() {
     myESPboy.begin("Pokitto");
-/*  
+  
       //Check OTA2
-  if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
-     terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
-     OTA2obj = new ESPboyOTA2(terminalGUIobj);
-  }
-*/    
+ // if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
+ //    terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
+ //    OTA2obj = new ESPboyOTA2(terminalGUIobj);
+ // }
+      
    #if PROJ_SCREENMODE != TASMODE
      Display::screenbuffer = new uint8_t[POK_SCREENBUFFERSIZE]; // maximum resolution
-   #endif // TASMODE
-    //LittleFS.begin();
-    EEPROM.begin(4000);
+   #endif // TASMODE    
     init(); // original functions
     display.begin();
     timePerFrame = POK_FRAMEDURATION;
-	frameEndMicros = 1;
-	startMenuTimer = 255;
 	//read default settings from flash memory (set using settings.hex)
 	readSettings();
 	showLogo();
@@ -176,14 +165,14 @@ void Core::titleScreen(const char*  name, const uint8_t *logo){}
  * @param updRectH The update rect.
  */
  
-//void (*Core::updateHook)(bool) = +[](bool){};
  
  uint32_t Core::getTime(){return (millis());};
  uint32_t Core::getTime_us(){return (micros());};
  
 bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_t updRectW, uint8_t updRectH) {
     static uint32_t prevTime;
-	if (getTime()-prevTime > POK_FRAMEDURATION) { //if time to render a new frame is reached and the frame end has ran once
+	if (getTime()-prevTime > timePerFrame) { //if time to render a new frame is reached and the frame end has ran once
+		updateHook(true);
 		frameCount++;
 		buttons.update();
 		//display.update();
@@ -195,8 +184,11 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
         #endif
          prevTime = getTime();
 	     return true;}
-	else 
+	else{
+	     updateHook(false);
 	     return false;
+     }
+     return false; 
 }
 
 

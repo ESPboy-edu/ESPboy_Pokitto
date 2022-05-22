@@ -79,6 +79,7 @@ public:
 
   // EXCECUTION CONTROL
 public:
+  static void (*updateHook)(bool);
   /** Initialize runtime (use this one) */
   static void begin();
   /** Initialize runtime (deprecated, avoid) */

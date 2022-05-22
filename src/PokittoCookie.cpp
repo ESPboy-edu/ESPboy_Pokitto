@@ -34,20 +34,33 @@
 */
 /**************************************************************************/
 
-#define eeprom_read_byte EEPROM.read
-#define eeprom_write_byte EEPROM.write
 
 #include "Pokitto_settings.h"
 #include "Pokitto.h"
 #include "ESP_EEPROM.h"
 #include "PokittoCookie.h"
+#include <Arduino.h>
 
 
 using namespace Pokitto;
 
-//char Cookie::_key[SBKEYSIZE];
-//char Cookie::_keyorder;
-//bool Cookie::_status;
+#define EEPROM_offset 10
+
+uint8_t eeprom_read_byte(uint16_t addr){
+ uint8_t vol;
+ addr+=EEPROM_offset;
+ vol=EEPROM.read(addr);
+ //Serial.print("R"); Serial.print(addr); Serial.print(" , "); Serial.println(vol);
+ return(vol);
+}
+
+void eeprom_write_byte(uint16_t addr, uint8_t vol){
+ addr+=EEPROM_offset;
+ //Serial.print("W"); Serial.print(addr); Serial.print(" , ");  Serial.println(vol);
+ if(addr<4000)EEPROM.write(addr, vol);
+ //else {Serial.print ("WRONG EEPROM ADDR "); Serial.println(addr-EEPROM_offset);}
+}
+
 
 #define HARDCODEDOFFSET 25 //bypasses Cookie parent instance general data (that does not need to be saved in EEPROM)
 
@@ -61,6 +74,7 @@ int Cookie::initialize() {
     int datasize = _datasize;
     // check if key already exists
     _keyorder = exists(_key);
+   
     if (_keyorder < SBMAXKEYS) {
             // key already exists
             // check amount of existing storage reserved for cookie
@@ -102,6 +116,13 @@ int Cookie::initialize() {
 }
 
 int Cookie::begin(const char* idkey, int datasize, char* ptr) {
+    EEPROM.begin(4000);
+    //Serial.println("EEPROM TEST");
+    //EEPROM.write(3998,'O');
+    //EEPROM.write(3999,'K');
+    //Serial.println((char)EEPROM.read(3998));
+    //Serial.println((char)EEPROM.read(3999));
+    //Serial.println("END EEPROM TEST");
     beginWithData(
             idkey,
             datasize-HARDCODEDOFFSET,  // warning! hardcoded! sizeof(this). Do not include the data of the parent Cookie instance
@@ -124,7 +145,7 @@ int Cookie::beginWithData(const char* idkey, int datasize, char* ptr) {
     return 0; //success
 }
 
-bool Cookie::saveCookie() {
+bool Cookie::saveCookie() {    
     if (!_status || !_pointer) return false; //return if not initialized
     char* p = _pointer;
     _head=0;
@@ -157,13 +178,11 @@ void Cookie::deleteCookie() {
 }
 
 int Cookie::exists(const char* idkey) {
-    for (int i=0; i< SBMAXKEYS; i++) {
-
-            if(eeprom_read_byte(/*(uint16_t*)*/(i*SBKEYSIZE))==idkey[0]) {
+    for (int i=0; i< SBMAXKEYS; i++) { 
+            if(eeprom_read_byte(/*(uint16_t*)*/(i*SBKEYSIZE))==idkey[0]) {              
                     int total=0;
-                    for (int j=0; j<SBKEYSIZE;j++) {
-                        if(eeprom_read_byte(/*(uint16_t*)*/(i*SBKEYSIZE+j))==idkey[j]) total++;
-                    }
+                    for (int j=0; j<SBKEYSIZE;j++) 
+                    if(eeprom_read_byte(/*(uint16_t*)*/(i*SBKEYSIZE+j))==idkey[j]) total++;
                     if (total==SBKEYSIZE) return i; // return the keyslot number where key exists
             }
 
@@ -232,10 +251,8 @@ bool Cookie::blockIsOwnedBy(int n, int k) {
 
 void Cookie::writeKeyToKeytable(const char* key, int slot) {
     for (int i=0; i<SBKEYSIZE; i++) {
-
-    if (key[i]) eeprom_write_byte(/*(uint16_t*)*/(slot*SBKEYSIZE+i),key[i]);
+     if (key[i]) eeprom_write_byte(/*(uint16_t*)*/(slot*SBKEYSIZE+i),key[i]);
     else eeprom_write_byte(/*(uint16_t*)*/(slot*SBKEYSIZE+i),0);
-
     }
     EEPROM.commit();
 }
@@ -300,6 +317,7 @@ bool Cookie::reserveBlock() {
         if (isFreeBlock(i)) {
                 //free block found, mark it for us in the blocktable
                 eeprom_write_byte(/*(uint16_t*)*/(SBKEYSIZE*SBMAXKEYS+i),_keyorder | 0x80);
+                EEPROM.commit();
                 return true;
         }
 
@@ -341,13 +359,11 @@ void Cookie::cleanKeytable() {
     EEPROM.commit();
 }
 
-char Cookie::readQueue() {
+char Cookie::readQueue() {    
     char data=0;
-
     int address;
     address = SBMAXKEYS*SBKEYSIZE+SBMAXBLOCKS+SBBLOCKSIZE*_block+_head%SBBLOCKSIZE;
     data=eeprom_read_byte(/*(uint16_t*)*/address);
-
     _head++;
     if (_head%SBBLOCKSIZE==0 && _head) {
             _block++;
@@ -356,10 +372,8 @@ char Cookie::readQueue() {
     return data;
 }
 
-void Cookie::writeQueue(char data) {
-
+void Cookie::writeQueue(char data) {    
     eeprom_write_byte(/*(uint16_t*)*/(SBMAXKEYS*SBKEYSIZE+SBMAXBLOCKS+SBBLOCKSIZE*_block+_head%SBBLOCKSIZE),data);
-
     _head++;
     if (_head%SBBLOCKSIZE==0 && _head) {
             _block++;

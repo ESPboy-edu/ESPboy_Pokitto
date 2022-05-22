@@ -41,6 +41,7 @@
 
 #define POK_DISPLAYLOGO  1
 #define POK_ENABLE_REFRESHWITHWAIT 0 // choose whether waiting in application refreshes display or not
+#define POK_AUD_FREQ 16000
 
 
 /** SCREEN CONFIGURATION **/
