@@ -34,7 +34,7 @@
 */
 /**************************************************************************/
 
-#include "Synth.h"
+#include "../Synth/Synth.h"
 
 uint16_t noiseval, noiseval2;
 

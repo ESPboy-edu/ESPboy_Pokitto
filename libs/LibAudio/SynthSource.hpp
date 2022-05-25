@@ -1,4 +1,3 @@
-#pragma once
 
 #include "../Synth/Synth.h"
 

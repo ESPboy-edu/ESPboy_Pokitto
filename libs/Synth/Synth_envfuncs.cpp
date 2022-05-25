@@ -34,7 +34,9 @@
 */
 /**************************************************************************/
 
-#include "Synth.h"
+#pragma once
+
+#include "../Synth/Synth.h"
 
 /** ENVELOPE FUNCTIONS **/
 

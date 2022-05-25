@@ -33,9 +33,10 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
+#ifndef SYNTH_CPP
+#define SYNTH_CPP
 
 #include "Pokitto.h"
-#include "Synth.h"
 #include "stdint.h"
 
 /** COMMON TO BOTH HW AND SIMULATED SOUND **/
@@ -58,7 +59,7 @@ OSC osc1,osc2,osc3;
 OSC patch[MAXPATCHES];
 BLOCK block[MAXBLOCKS];
 
-
+#endif
 
 
 

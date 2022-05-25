@@ -26,7 +26,6 @@
 #include "Synth_osc.h"
 #include "Synth_song.h"
 
-
 /* PROPER WAY
 void f() {}
 
@@ -37,6 +36,7 @@ int main()
     FunctionPtr ptr = f;
 }
 */
+
 
 #define OPT_ADSR 1
 #define OPT_LOOP 2
@@ -168,5 +168,15 @@ extern void setOSC(OSC*, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t,
 extern void setOSC(OSC*,uint8_t,uint8_t,uint16_t, uint8_t, uint32_t);
 
 extern void waveoff(OSC*);
+
+
+#include "Synth_envfuncs.cpp"
+#include "Synth_mixfuncs.cpp"
+#include "Synth_oscfuncs.cpp"
+#include "Synth_songfuncs.cpp"
+#include "Synth_wavefuncs.cpp"
+#include "Synth_helpers.cpp"
+#include "Synth.cpp"
+
 #endif // SYNTH_H
 

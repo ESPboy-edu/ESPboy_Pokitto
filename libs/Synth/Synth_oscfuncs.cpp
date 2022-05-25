@@ -34,14 +34,10 @@
 */
 /**************************************************************************/
 
-#include "Synth.h"
-#include "Synth_wavefuncs.cpp"
-#include "Synth_helpers.cpp"
+#pragma once
 
-extern uint16_t noiseval;
+#include "../Synth/Synth.h"
 
-extern uint8_t xorshift8(void);
-extern uint16_t xorshift16(void);
 
 /** OSCILLATOR FUNCTIONS **/
 

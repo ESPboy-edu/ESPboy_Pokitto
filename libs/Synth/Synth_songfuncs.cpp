@@ -34,14 +34,17 @@
 */
 /**************************************************************************/
 
-#include "PokittoDisk.h"
-#include "Synth.h"
+
+//#include "PokittoDisk.h"
+#include "../Synth/Synth.h"
+
+
+
 #ifdef TRACKER_EXAMPLE
 #include "Tracker.h"
 #endif // TRACKER
-#ifdef POK_SIM
-#include "FileIO.h"
-#endif
+
+
 
 /** SONG FUNCTIONS **/
 
@@ -174,7 +177,7 @@ void updatePlayback() {
 }
 
 void emptyPatches(){
-    for (int i=0; i<16; i++) {
+    for (int i=0; i<15; i++) {
     patch[i].vol = 127;
     patch[i].on = true; patch[i].wave = 1; patch[i].echo = 0; patch[i].count = 0; patch[i].cinc =0;
     patch[i].attack = 0; patch[i].loop = 0; patch[i].adsrphase = 0; patch[i].adsr = 0; patch[i].decay = 20;

@@ -98,11 +98,12 @@ namespace Audio {
     };
 }
 
-#include "./PokittoHWSink.hpp"
 
-#include "./SilenceSource.hpp"
-#include "./RAWFileSource.hpp"
-#include "./ByteBeatSource.hpp"
-#include "./SFX8Source.hpp"
-#include "./SynthSource.hpp"
-#include "./SimpleTune.hpp"
+//#include "PokittoSimSink.hpp"
+#include "SilenceSource.hpp"
+#include "PokittoHWSink.hpp"
+#include "RAWFileSource.hpp"
+#include "ByteBeatSource.hpp"
+#include "SFX8Source.hpp"
+#include "SynthSource.hpp"
+#include "SimpleTune.hpp"

@@ -18,8 +18,10 @@
 */
 /**************************************************************************/
 
+#pragma once
+
 #include "Pokitto.h"
-#include "Synth.h"
+#include "../Synth/Synth.h"
 #include "Pokitto_settings.h"
 /*
 #define PROGMEM

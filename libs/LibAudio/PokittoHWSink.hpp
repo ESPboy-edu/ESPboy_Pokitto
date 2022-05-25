@@ -1,5 +1,7 @@
 #pragma once
-#include<sigma_delta.h>
+#include <LittleFS.h>
+#include <sigma_delta.h>
+
 
 namespace Audio {
 
@@ -19,8 +21,16 @@ namespace Audio {
 
     template <u32 channelCount, u32 sampleRate>
     class Sink : public BaseSink<Sink<channelCount, sampleRate>, channelCount> {
-        static constexpr u32 TIMER_32_0_IRQn = 18;
-        void enableDAC() {
+        void enableDAC() {  
+          attachDAC();}
+        
+        void detachDAC(){
+          noInterrupts();
+          timer1_disable();
+          sigmaDeltaDisable();
+          interrupts();};
+        
+        void attachDAC(){
           noInterrupts();
           sigmaDeltaSetup(0, 48000);
           sigmaDeltaAttachPin(D3);
@@ -29,16 +39,19 @@ namespace Audio {
           timer1_enable(TIM_DIV1, TIM_EDGE, TIM_LOOP);
           timer1_write(80000000 / sampleRate * 2);
           interrupts(); 
-        }
-
-         static void IRAM_ATTR IRQ(void){
+        };
+        
+        
+    static void IRAM_ATTR IRQ(void){
             static u8 lastByte = 128;
+            
             auto currentBuffer = audio_playHead >> 9;
+            
             if(!audio_state[currentBuffer]){
               sigmaDeltaWrite(0, lastByte);
               return;
             }
-                
+            
             lastByte = audio_buffer[audio_playHead];
             audio_playHead++;
 
@@ -46,12 +59,10 @@ namespace Audio {
 
             if(currentBuffer != nextBuffer){
                 audio_state[currentBuffer] = 0;
-                if(nextBuffer == bufferCount){
+                if(nextBuffer == bufferCount)
                     audio_playHead = 0;
-                }
-            }
-
-            sigmaDeltaWrite(0, lastByte);// lastByte * audio_volume >> 8;
+             }
+            sigmaDeltaWrite(0, lastByte/* * audio_volume >> 8*/);// lastByte * audio_volume >> 8;
         }
 
 

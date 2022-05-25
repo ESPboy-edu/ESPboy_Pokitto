@@ -2,7 +2,8 @@
 
 //#include <new>
 //#include <File>
-#include<LittleFS.h>
+#include <LittleFS.h>
+
 
 #define ALIGNED __attribute__ ((aligned))
 #define NAKED __attribute__((naked))
@@ -98,7 +99,7 @@ namespace Audio {
             }
 
             File& file = *reinterpret_cast<File*>(ram);
-            if( LittleFS.open(name, "r")){
+            if(file=LittleFS.open(name, "r+")){
                 return &play<channel>(file, file.size());
             } else {
                 Audio::stop<channel>();
