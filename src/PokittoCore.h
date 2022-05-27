@@ -74,7 +74,7 @@ class Core
 public:
   //static Backlight backlight;
   static Buttons buttons;
-  //static Sound sound;
+  static Sound sound;
   static Display display;
 
   // EXCECUTION CONTROL

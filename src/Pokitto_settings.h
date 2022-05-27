@@ -41,15 +41,21 @@
 
 #define POK_DISPLAYLOGO  1
 #define POK_ENABLE_REFRESHWITHWAIT 0 // choose whether waiting in application refreshes display or not
-#define POK_AUD_FREQ 16000
 
 
 /** SOND CONFIGURATION **/
+#ifndef PROJ_AUD_FREQ
+    #define POK_AUD_FREQ 22050 //Valid values: 8000, 11025, 16000, 22050 // audio update frequency in Hz
+#else
+    #define POK_AUD_FREQ PROJ_AUD_FREQ
+#endif
+
 #ifndef PROJ_ENABLE_SOUND
     #define POK_ENABLE_SOUND 1
 #else
     #define POK_ENABLE_SOUND PROJ_ENABLE_SOUND
 #endif
+
 
 #ifndef PROJ_SOUND_BUFFERED
     #define POK_SOUND_BUFFERED 0

@@ -32,18 +32,18 @@ namespace Audio {
         
         void attachDAC(){
           noInterrupts();
-          sigmaDeltaSetup(0, 48000);
+          sigmaDeltaSetup(0, sampleRate*2);
           sigmaDeltaAttachPin(D3);
           sigmaDeltaEnable();
           timer1_attachInterrupt(IRQ);
           timer1_enable(TIM_DIV1, TIM_EDGE, TIM_LOOP);
-          timer1_write(80000000 / sampleRate * 2);
+          timer1_write(80000000 / sampleRate);
           interrupts(); 
         };
         
         
     static void IRAM_ATTR IRQ(void){
-            static u8 lastByte = 128;
+            static u8 lastByte = 0;
             
             auto currentBuffer = audio_playHead >> 9;
             

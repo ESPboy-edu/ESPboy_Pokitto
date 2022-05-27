@@ -41,13 +41,13 @@
 #include "PokittoTimer.h"
 #include "PokittoLogos.h"
 #include <stdlib.h>
-//#include <LittleFS.h>
+#include <LittleFS.h>
 //#include "ESPboyInit.h"
 //#include "ESPboyTerminalGUI.h"
 //#include "ESPboyOTA2.h"
 
 
-//ESPboyInit myESPboy;
+ESPboyInit myESPboy;
 //ESPboyTerminalGUI *terminalGUIobj = NULL;
 //ESPboyOTA2 *OTA2obj = NULL;
 
@@ -64,19 +64,22 @@ uint32_t Core::frameCount;
 
 /** Components */
 Buttons Core::buttons;
-//Sound Core::sound;
+#if POK_ENABLE_SOUND > 0
+Sound Core::sound;
+#endif
 Display Core::display;
 
 extern uint8_t *Display::screenbuffer;
 
 void Core::begin() {
     myESPboy.begin("Pokitto");
+    //LittleFS.begin();
   
       //Check OTA2
- // if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
- //    terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
- //    OTA2obj = new ESPboyOTA2(terminalGUIobj);
- // }
+  //if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
+  //   terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
+  //   OTA2obj = new ESPboyOTA2(terminalGUIobj);
+  //}
       
    #if PROJ_SCREENMODE != TASMODE
      Display::screenbuffer = new uint8_t[POK_SCREENBUFFERSIZE]; // maximum resolution
@@ -126,17 +129,9 @@ void Core::initDisplay() {
 }
 
 void Core::showLogo() {
-  /** POKITTO WAIT **/
-  //display.directcolor = COLOR_GREEN;
-  //logo 184x56
-  //display.directBitmap(-28,16,Pokitto_logo,1,1);
-  	uint16_t bufLine[128];
-  	uint16_t addr=0;
-  	myESPboy.tft.setAddrWindow(0, 40, 128, 40);
-	for(uint8_t i=0; i<40; i++){
-	  for(uint8_t j=0; j<128; j++)
-	    bufLine[j]=Pokitto_logo[addr++];
-      myESPboy.tft.pushColors(bufLine, 128);}
+// 128x43
+    myESPboy.tft.fillScreen(TFT_BLACK);
+    myESPboy.tft.drawXBitmap(0, 40, Pokitto_logo, 128, 43, TFT_GREEN, TFT_BLACK);      
 	delay(2000);
 }
 
@@ -175,6 +170,11 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
 		updateHook(true);
 		frameCount++;
 		buttons.update();
+	    #if POK_ENABLE_SOUND > 0
+			//sound.updateTrack();
+			//sound.updatePattern();
+			//sound.updateNote();
+		#endif
 		//display.update();
 
         // FPS counter

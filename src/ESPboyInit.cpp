@@ -25,9 +25,6 @@ void ESPboyInit::begin(const char *appName) {
      mcp.pinMode(i, INPUT);
      mcp.pullUp(i, HIGH);}
 
-//LED init
-  //myLED.begin(&this->mcp);
-  //myLED.setRGB(0,0,0);
 
 //sound init and test
   pinMode(SOUNDPIN, OUTPUT);
@@ -49,7 +46,7 @@ void ESPboyInit::begin(const char *appName) {
 //draw ESPboylogo  
   tft.drawXBitmap(30, 24, ESPboyLogo, 68, 64, TFT_YELLOW);
   tft.setTextSize(1);
-  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  tft.setTextColor(TFT_YELLOW);
   tft.drawString (appName, (128-(strlen(appName)*6))/2, 102);
 
 //LCD backlit fading on

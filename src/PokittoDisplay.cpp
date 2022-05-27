@@ -72,7 +72,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "PokittoDisplay.h"
 #include "Pokitto_settings.h"
 #include "PokittoCore.h"
-#include "PokittoSound.h"
+//#include "PokittoSound.h"
 #include "ESPboyInit.h"
 
 extern ESPboyInit myESPboy;
@@ -87,7 +87,7 @@ void ShowCrashScreenAndWait( const char* texLine1, const char* texLine2, const c
 
 
 using core = Pokitto::Core;
-using _pdsound = Pokitto::Sound;
+//using _pdsound = Pokitto::Sound;
 using namespace Pokitto;
 
 void lcdPrepareRefresh(){};

@@ -48,11 +48,8 @@
     #define VOLUME_STARTUP VOLUME_SPEAKER_MAX
 #endif // MAXVOLTEST
 
-#ifdef POK_SIM
-#define VOLUME_STEP 1
-#else
 #define VOLUME_STEP 8
-#endif
+
 
 namespace Pokitto {
 

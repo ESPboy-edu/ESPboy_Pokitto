@@ -2,6 +2,7 @@
 #define PROJ_FPS 60
 #define PROJ_HIGH_RAM HIGH_RAM_MUSIC
 #define PROJ_PERSISTENCE true
-#define PROJ_ENABLE_SOUND 0
-#define PROJ_AUD_FREQ 16000
-#define PROJ_SOUND_BUFFER 0
+#define PROJ_ENABLE_SOUND 1     // 0 = all sound functions disabled
+#define PROJ_ENABLE_SYNTH 1
+#define POK_ENABLE_SD 0
+#define PROJ_AUD_FREQ 8000
