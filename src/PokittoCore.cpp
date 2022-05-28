@@ -41,8 +41,7 @@
 #include "PokittoTimer.h"
 #include "PokittoLogos.h"
 #include <stdlib.h>
-#include <LittleFS.h>
-//#include "ESPboyInit.h"
+#include "ESPboyInit.h"
 //#include "ESPboyTerminalGUI.h"
 //#include "ESPboyOTA2.h"
 
@@ -64,7 +63,7 @@ uint32_t Core::frameCount;
 
 /** Components */
 Buttons Core::buttons;
-#if POK_ENABLE_SOUND > 0
+#if (POK_ENABLE_SOUND == 1)
 Sound Core::sound;
 #endif
 Display Core::display;
@@ -170,10 +169,10 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
 		updateHook(true);
 		frameCount++;
 		buttons.update();
-	    #if POK_ENABLE_SOUND > 0
-			//sound.updateTrack();
-			//sound.updatePattern();
-			//sound.updateNote();
+	    #if (POK_ENABLE_SOUND == 1)
+			sound.updateTrack();
+			sound.updatePattern();
+			sound.updateNote();
 		#endif
 		//display.update();
 

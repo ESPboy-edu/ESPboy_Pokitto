@@ -74,7 +74,9 @@ class Core
 public:
   //static Backlight backlight;
   static Buttons buttons;
+  #if (POK_ENABLE_SOUND == 1)
   static Sound sound;
+  #endif
   static Display display;
 
   // EXCECUTION CONTROL

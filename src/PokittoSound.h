@@ -38,6 +38,7 @@
 #include <stdint.h>
 #include "Pokitto_settings.h"
 
+
 #ifndef MAX_VOL_TEST
     #define VOLUME_SPEAKER_MAX 255 //((8<<GLOBVOL_SHIFT)-1)
     #define VOLUME_HEADPHONE_MAX 127
@@ -48,8 +49,11 @@
     #define VOLUME_STARTUP VOLUME_SPEAKER_MAX
 #endif // MAXVOLTEST
 
+#ifdef POK_SIM
+#define VOLUME_STEP 1
+#else
 #define VOLUME_STEP 8
-
+#endif
 
 namespace Pokitto {
 
