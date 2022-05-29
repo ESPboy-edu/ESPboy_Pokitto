@@ -4,6 +4,9 @@ namespace Audio {
     class SFX8Source {
         u32 len;
         const u8 *head;
+        bool loop;
+        const u8 *sourceData;
+        u32 sourceLen;
 
         static void copy(u8 *buffer, void *ptr){
             auto& state = *reinterpret_cast<SFX8Source*>(ptr);
@@ -12,6 +15,7 @@ namespace Audio {
             memset(buffer + len, 127, 512 - len);
             state.head += len;
             state.len -= len;
+            if(state.loop == true && (uint32_t)state.head >= (uint32_t)state.sourceData+state.len) {state.head = state.sourceData; state.len = state.sourceLen;}
         }
 
         static void mix(u8 *buffer, void *ptr){
@@ -21,9 +25,9 @@ namespace Audio {
             Audio::mix(buffer, head, len);
             state.head += len;
             state.len -= len;
+            if(state.loop == true && (uint32_t)state.head >= (uint32_t)state.sourceData+state.len) {state.head = state.sourceData; state.len = state.sourceLen;}
         }
 
-        #ifndef POK_SIM
         static void lowLatencyMix(SFX8Source& state, u32 channel){
             u32 len = state.len;
             u32 out = audio_playHead + 10;
@@ -51,19 +55,25 @@ namespace Audio {
                 }
             }
         }
-        #endif
+       
 
     public:
         
+        SFX8Source&  setLoop(bool doesLoop){
+            loop = doesLoop;
+            return *this;
+        }
+
         template<u32 channel = 1, bool lowLatency = true>
         static SFX8Source& play(const u8 *data, u32 len){
             static SFX8Source state;
             state.len = len;
             state.head = data;
-            #ifndef POK_SIM
+            state.loop = false;
+            state.sourceData = data;
+            state.sourceLen = len;
             if(lowLatency)
                 lowLatencyMix(state, channel);
-            #endif
             connect(channel, &state, channel == 0 ? copy : mix);
             return state;
         }
