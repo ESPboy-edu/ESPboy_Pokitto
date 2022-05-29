@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM constexpr uint8_t Plat1_Sml[] = {
+4, 4,
+0x33,0xb5,
+0x22,0x55,
+0x22,0x42,
+0x44,0x22
+};
