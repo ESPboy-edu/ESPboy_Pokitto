@@ -15,7 +15,7 @@ namespace Audio {
             memset(buffer + len, 127, 512 - len);
             state.head += len;
             state.len -= len;
-            if(state.loop == true && (uint32_t)state.head >= (uint32_t)state.sourceData+state.len) {state.head = state.sourceData; state.len = state.sourceLen;}
+            if(state.loop == true && state.len == 0) {state.head = state.sourceData; state.len = state.sourceLen;}
         }
 
         static void mix(u8 *buffer, void *ptr){
@@ -25,7 +25,7 @@ namespace Audio {
             Audio::mix(buffer, head, len);
             state.head += len;
             state.len -= len;
-            if(state.loop == true && (uint32_t)state.head >= (uint32_t)state.sourceData+state.len) {state.head = state.sourceData; state.len = state.sourceLen;}
+            if(state.loop == true && state.len == 0) {state.head = state.sourceData; state.len = state.sourceLen;}
         }
 
         static void lowLatencyMix(SFX8Source& state, u32 channel){
