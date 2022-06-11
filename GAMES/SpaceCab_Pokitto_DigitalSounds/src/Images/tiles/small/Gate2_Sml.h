@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM constexpr uint8_t Gate2_Sml[] = {
+4, 4,
+0x00,0x76,
+0x00,0x6d,
+0x00,0x76,
+0x00,0x6d
+};

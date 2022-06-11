@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM constexpr uint8_t Rocks_Sml[] = {
+4, 4,
+0x24,0x42,
+0x44,0x24,
+0x24,0x24,
+0x42,0x42
+};

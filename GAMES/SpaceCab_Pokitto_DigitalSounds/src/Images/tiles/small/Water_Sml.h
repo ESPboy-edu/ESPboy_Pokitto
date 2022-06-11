@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM constexpr uint8_t Water_Sml[] = {
+4, 4,
+0x00,0x00,
+0x0c,0xc0,
+0xc1,0x1c,
+0x11,0x11
+};

@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM constexpr uint8_t Fuel1_Sml[] = {
+4, 4,
+0x06,0x60,
+0x88,0x88,
+0x88,0xa8,
+0x8a,0x88
+};

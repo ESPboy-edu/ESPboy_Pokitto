@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM constexpr uint8_t Leve2_Sml[] = {
+4, 4,
+0xdd,0xdd,
+0xd8,0x8d,
+0xdd,0xdd,
+0xd3,0x3d
+};

@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM constexpr uint8_t Metal_Sml[] = {
+4, 4,
+0x65,0x57,
+0x56,0x55,
+0x65,0x76,
+0x55,0x75
+};

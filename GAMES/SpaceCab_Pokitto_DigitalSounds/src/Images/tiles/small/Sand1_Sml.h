@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM constexpr uint8_t Sand1_Sml[] = {
+4, 4,
+0x9a,0xaa,
+0xa9,0x99,
+0xaa,0xa9,
+0xaa,0xa9
+};
