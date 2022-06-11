@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM const uint8_t BulletIce_00[] = {
+4, 4,
+0x00,0xc0,
+0x1c,0x7c,
+0xcd,0x7c,
+0x0c,0xc0
+};

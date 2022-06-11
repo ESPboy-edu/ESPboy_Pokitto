@@ -170,9 +170,9 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
 		frameCount++;
 		buttons.update();
 	    #if (POK_ENABLE_SOUND == 1)
-			sound.updateTrack();
-			sound.updatePattern();
-			sound.updateNote();
+			//sound.updateTrack();
+			//sound.updatePattern();
+			//sound.updateNote();
 		#endif
 		//display.update();
 
@@ -199,7 +199,8 @@ uint8_t Core::getFrameRate() {
 	return 1000 / timePerFrame;}
 
 void Core::pickRandomSeed(){
-        initRandom();}
+        //initRandom();
+}
 
 
 bool Core::collidePointRect(int16_t x1, int16_t y1 ,int16_t x2 ,int16_t y2, int16_t w, int16_t h){

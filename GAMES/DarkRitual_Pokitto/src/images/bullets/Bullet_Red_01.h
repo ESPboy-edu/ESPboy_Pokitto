@@ -1,0 +1,11 @@
+// Automatically generated file, do not edit.
+
+#pragma once
+
+PROGMEM const uint8_t Bullet_Red_01[] = {
+4, 4,
+0x08,0x80,
+0x87,0x28,
+0x87,0x82,
+0x08,0x00
+};
