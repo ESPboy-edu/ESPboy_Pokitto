@@ -1,0 +1,5 @@
+{ LevelType::Transform, LHS_ENEMY_POS, 0, false, 0 },
+{ LevelType::TransformLaunchSequence, 0, TRANSFORM_01, false, 16 },
+{ LevelType::TransformLaunchSequence, 1, TRANSFORM_01, false, 16 },
+{ LevelType::TransformLaunchSequence, 2, TRANSFORM_01, false, 16 },
+{ LevelType::DelayUntilAllFinished, 0, 0, false, 0 },
