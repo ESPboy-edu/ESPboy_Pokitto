@@ -39,6 +39,8 @@
 #include "Pokitto_settings.h"
 
 
+#if (POK_ENABLE_SOUND == 1)
+
 #ifndef MAX_VOL_TEST
     #define VOLUME_SPEAKER_MAX 255 //((8<<GLOBVOL_SHIFT)-1)
     #define VOLUME_HEADPHONE_MAX 127
@@ -130,3 +132,4 @@ public:
 };
 
 }
+#endif

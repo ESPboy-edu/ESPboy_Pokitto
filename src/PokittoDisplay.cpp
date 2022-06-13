@@ -113,23 +113,47 @@ void lcdRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color
 
 
 void lcdTile(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t* gfx){myESPboy.tft.drawString("NO TAS mode yet",0,0);};
-void lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* paletteptr){myESPboy.tft.drawString("NO Mode16 yet",0,0);};
 void lcdRefreshMixMode(const uint8_t *screenBuffer, const uint16_t * palettePointer, const uint8_t * scanType){myESPboy.tft.drawString("NO MixMode yet",0,0);};
 void lcdRefreshMode64( const uint8_t *scrbuf, const uint16_t* paletteptr ){myESPboy.tft.drawString("NO Mode64 yet",0,0);};
 
 
+
+//220x176 rescale to 128x128
+void lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* paletteptr){
+   static uint16_t bufLine[128] __attribute__ ((aligned));
+   uint8_t readByte;
+   uint16_t addr;
+
+  myESPboy.tft.setAddrWindow(0, 0, 128, 128);
+  float xd = 220.0/128.0, yd = 176.0/128.0, xxd;
+
+  for (uint8_t yyy=0; yyy<128; yyy++){
+    xxd=((uint16_t)((float)(yyy)*yd))*220;
+    for(int xxx=0; xxx<128; xxx++){
+      addr = (uint16_t)xxd;
+      xxd += xd;
+      readByte=scrbuf[addr/2];
+      if(addr%2)bufLine[xxx] = paletteptr[readByte&15];
+      else bufLine[xxx] = paletteptr[readByte>>4];
+    }
+    myESPboy.tft.pushColors(bufLine, 128);
+  }
+};
+
+
+//110x88
 void lcdRefreshMode13(const uint8_t *scrbuf, const uint16_t* paletteptr, uint8_t offset){
    static uint16_t bufLine[LCDWIDTH] __attribute__ ((aligned));
    uint16_t addr=0;
    myESPboy.tft.setAddrWindow(X_OFFSET, Y_OFFSET, LCDWIDTH, LCDHEIGHT);
     for(uint8_t y=0; y<LCDHEIGHT; y++){
      for(uint8_t x=0; x<LCDWIDTH; x++)
-       bufLine[x]=pgm_read_word(&paletteptr[scrbuf[addr++]]);
+       bufLine[x]=paletteptr[scrbuf[addr++]];
      myESPboy.tft.pushColors(bufLine, Display::width);}
 };
 
 
-
+//110x88
 void lcdRefreshMode2(const uint8_t* scrbuf, const uint16_t* paletteptr ){
    static uint16_t bufLine[LCDWIDTH] __attribute__ ((aligned));
    uint8_t readByte;
@@ -138,8 +162,8 @@ void lcdRefreshMode2(const uint8_t* scrbuf, const uint16_t* paletteptr ){
     for(uint8_t y=0; y<LCDHEIGHT; y++){
      for(uint8_t x=0; x<LCDWIDTH; x+=2){
        readByte=scrbuf[addr++];
-       bufLine[x]=pgm_read_word(&paletteptr[readByte>>4]);
-       bufLine[x+1]=pgm_read_word(&paletteptr[readByte&15]);
+       bufLine[x]=paletteptr[readByte>>4];
+       bufLine[x+1]=paletteptr[readByte&15];
      }
      myESPboy.tft.pushColors(bufLine, Display::width);
    }

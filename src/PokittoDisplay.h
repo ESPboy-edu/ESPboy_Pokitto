@@ -116,7 +116,7 @@ enum defcolors {
     C_PEACH
 };
 
-const uint16_t def565palette[16] = {
+const uint16_t def565palette[16] PROGMEM = {
     //kind of like pico8 palette
     0x0000, 0x194a, 0x792a, 0x042a,
     0xaa86, 0x5aa9, 0xc618, 0xff9d,

@@ -1,6 +1,6 @@
 #pragma once
 
-inline const uint8_t miloslav[] = {
+PROGMEM const uint8_t miloslav[] = {
     0, 0, 0,
     32, 36, 32,
     72, 72, 72,

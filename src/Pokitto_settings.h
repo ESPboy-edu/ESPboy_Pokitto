@@ -42,6 +42,12 @@
 #define POK_DISPLAYLOGO  1
 #define POK_ENABLE_REFRESHWITHWAIT 0 // choose whether waiting in application refreshes display or not
 
+//colors
+#define WHITE 0
+#define BLACK 1
+#define GRAY 2
+#define INVERT 255
+
 
 /** SOND CONFIGURATION **/
 #ifndef PROJ_AUD_FREQ
@@ -82,7 +88,7 @@ inline constexpr bool POK_PERSISTENCE = PROJ_PERSISTENCE;
 #define PROJ_CLEAR_SCREEN 0
 inline constexpr uint32_t POK_CLEAR_SCREEN = PROJ_CLEAR_SCREEN;
 
-#define PROJ_FPS 60
+#define PROJ_FPS 40
 inline constexpr uint32_t POK_FPS = PROJ_FPS;
 inline constexpr uint32_t POK_FRAMEDURATION = 1000 / PROJ_FPS;
 

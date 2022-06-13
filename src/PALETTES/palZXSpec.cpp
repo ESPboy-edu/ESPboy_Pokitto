@@ -2,7 +2,7 @@
 #include<Arduino.h>
 
 
-PROGMEM const unsigned char paletteZXSpec[48] = {
+const unsigned char paletteZXSpec[48] = {
 0x00,0x00,0x00, //black
 0x1C,0x1C,0x1C, //  ANOTHER BLACK - POINTLESS.  IVE MADE A VERY DARK GREY INSTEAD.
 0x00,0x00,0xC0, //blue d

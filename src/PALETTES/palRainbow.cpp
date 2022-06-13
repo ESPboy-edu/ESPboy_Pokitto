@@ -2,7 +2,7 @@
 #include<Arduino.h>
 
 
-PROGMEM const unsigned char paletteRainbow[48] = {
+const unsigned char paletteRainbow[48] = {
 0xfb,0x00,0x25,
 0xfb,0x00,0x70,
 0xfb,0x00,0xeb,

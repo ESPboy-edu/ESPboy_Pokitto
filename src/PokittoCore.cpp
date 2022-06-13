@@ -64,7 +64,7 @@ uint32_t Core::frameCount;
 /** Components */
 Buttons Core::buttons;
 #if (POK_ENABLE_SOUND == 1)
-Sound Core::sound;
+//Sound Core::sound;
 #endif
 Display Core::display;
 
@@ -75,10 +75,10 @@ void Core::begin() {
     //LittleFS.begin();
   
       //Check OTA2
-  //if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
-  //   terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
-  //   OTA2obj = new ESPboyOTA2(terminalGUIobj);
-  //}
+//  if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
+//     terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
+//     OTA2obj = new ESPboyOTA2(terminalGUIobj);
+//  }
       
    #if PROJ_SCREENMODE != TASMODE
      Display::screenbuffer = new uint8_t[POK_SCREENBUFFERSIZE]; // maximum resolution
@@ -169,11 +169,11 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
 		updateHook(true);
 		frameCount++;
 		buttons.update();
-	    #if (POK_ENABLE_SOUND == 1)
-			//sound.updateTrack();
-			//sound.updatePattern();
-			//sound.updateNote();
-		#endif
+	    //#if (POK_ENABLE_SOUND == 1)
+		//	sound.updateTrack();
+		//	sound.updatePattern();
+		//	sound.updateNote();
+		//#endif
 		//display.update();
 
         // FPS counter
@@ -200,7 +200,7 @@ uint8_t Core::getFrameRate() {
 
 void Core::pickRandomSeed(){
         //initRandom();
-}
+        }
 
 
 bool Core::collidePointRect(int16_t x1, int16_t y1 ,int16_t x2 ,int16_t y2, int16_t w, int16_t h){

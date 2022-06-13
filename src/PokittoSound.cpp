@@ -65,17 +65,18 @@
 #include "PokittoSound.h"
 
 #if (POK_ENABLE_SYNTH == 1)
-#include "../libs/Sunth/Synth.h"
+//#include "../libs/Sunth/Synth.h"
 #endif
 
 using namespace Pokitto;
-
+/*
 #if (POK_ENABLE_SOUND == 1)
+
 #include "../libs/LibAudio/LibAudio.h"
 Audio::Sink<NUM_CHANNELS, POK_AUD_FREQ> audioSink;
 
 
-/** discrete hardware volume control **/
+// discrete hardware volume control 
 static const uint8_t discrete_vol_levels[] = {0,32,64,96,128,160,192,224};
 
 void Sound::begin(){
@@ -127,8 +128,9 @@ uint32_t Sound::getMusicStreamElapsedMilliSec(){
 }
 #endif
 
+*/
 
-
+/*
 #if (POK_ENABLE_SYNTH == 1)
 void Sound::playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmode)
 {
@@ -155,5 +157,5 @@ void Sound::loadSampleToOsc(uint8_t os, uint8_t* data, uint32_t datasize) {
     o->samplelength = datasize;
     o->samplepos = 0;
 }
-
 #endif
+*/
