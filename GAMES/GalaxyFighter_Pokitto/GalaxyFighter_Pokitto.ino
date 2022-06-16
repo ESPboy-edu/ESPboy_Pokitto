@@ -14,11 +14,13 @@ Audio::Sink<MAXCHANNELS, 8000> audio;
 #include "src/utils/Utils.h"
 #include "src/utils/Enums.h"
 
+#include "ESPboyInit.h"
 
 using PC = Pokitto::Core;
 using PD = Pokitto::Display;
 //using PS = Pokitto::Sound;
 
+extern ESPboyInit myESPboy;
 
 Game game;
 GameCookie cookie;
@@ -60,7 +62,8 @@ void setup() {
 
 
 void loop(){
-    if (PC::update()) {PD::clear(); game.loop(); PD::update();};
+  static uint32_t tme;
+    if (PC::update()) {PD::clear(); game.loop(); PD::update();}
     delay(0);
 };
 
