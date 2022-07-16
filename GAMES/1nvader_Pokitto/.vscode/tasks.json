@@ -1,0 +1,86 @@
+{
+ "version": "2.0.0",
+ "tasks": [
+  {
+   "label": "Pokitto compile",
+   "type": "shell",
+   "command": "\"/Applications/Programming/FemtoIDE 3.app/Contents/MacOS/nwjs\" \"/Applications/Programming/FemtoIDE 3.app/Contents/Resources/app.nw\" \"1nvader_Pokitto\" compile - \"Pokitto\"",
+   "problemMatcher": [
+    "$gcc"
+   ],
+   "group": "build"
+  },
+  {
+   "label": "Pokitto compile & run",
+   "type": "shell",
+   "command": "\"/Applications/Programming/FemtoIDE 3.app/Contents/MacOS/nwjs\" \"/Applications/Programming/FemtoIDE 3.app/Contents/Resources/app.nw\" \"1nvader_Pokitto\" compileAndRun - \"Pokitto\"",
+   "problemMatcher": [
+    "$gcc"
+   ],
+   "group": {
+    "kind": "build",
+    "isDefault": true
+   }
+  },
+  {
+   "label": "Desktop compile",
+   "type": "shell",
+   "command": "\"/Applications/Programming/FemtoIDE 3.app/Contents/MacOS/nwjs\" \"/Applications/Programming/FemtoIDE 3.app/Contents/Resources/app.nw\" \"1nvader_Pokitto\" compile - \"Desktop\"",
+   "problemMatcher": [
+    "$gcc"
+   ],
+   "group": "build"
+  },
+  {
+   "label": "Desktop compile & run",
+   "type": "shell",
+   "command": "\"/Applications/Programming/FemtoIDE 3.app/Contents/MacOS/nwjs\" \"/Applications/Programming/FemtoIDE 3.app/Contents/Resources/app.nw\" \"1nvader_Pokitto\" compileAndRun - \"Desktop\"",
+   "problemMatcher": [
+    "$gcc"
+   ],
+   "group": {
+    "kind": "build"
+   }
+  },
+  {
+   "label": "linux compile",
+   "type": "shell",
+   "command": "\"/Applications/Programming/FemtoIDE 3.app/Contents/MacOS/nwjs\" \"/Applications/Programming/FemtoIDE 3.app/Contents/Resources/app.nw\" \"1nvader_Pokitto\" compile - \"linux\"",
+   "problemMatcher": [
+    "$gcc"
+   ],
+   "group": "build"
+  },
+  {
+   "label": "linux compile & run",
+   "type": "shell",
+   "command": "\"/Applications/Programming/FemtoIDE 3.app/Contents/MacOS/nwjs\" \"/Applications/Programming/FemtoIDE 3.app/Contents/Resources/app.nw\" \"1nvader_Pokitto\" compileAndRun - \"linux\"",
+   "problemMatcher": [
+    "$gcc"
+   ],
+   "group": {
+    "kind": "build"
+   }
+  },
+  {
+   "label": "windows compile",
+   "type": "shell",
+   "command": "\"/Applications/Programming/FemtoIDE 3.app/Contents/MacOS/nwjs\" \"/Applications/Programming/FemtoIDE 3.app/Contents/Resources/app.nw\" \"1nvader_Pokitto\" compile - \"windows\"",
+   "problemMatcher": [
+    "$gcc"
+   ],
+   "group": "build"
+  },
+  {
+   "label": "windows compile & run",
+   "type": "shell",
+   "command": "\"/Applications/Programming/FemtoIDE 3.app/Contents/MacOS/nwjs\" \"/Applications/Programming/FemtoIDE 3.app/Contents/Resources/app.nw\" \"1nvader_Pokitto\" compileAndRun - \"windows\"",
+   "problemMatcher": [
+    "$gcc"
+   ],
+   "group": {
+    "kind": "build"
+   }
+  }
+ ]
+}
