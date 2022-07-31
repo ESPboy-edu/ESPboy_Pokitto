@@ -2,7 +2,7 @@
 
 #pragma once
 
-inline constexpr uint8_t Number_1[] = {
+PROGMEM const uint8_t Number_1[] = {
 0x03,0x05,
 0x07,0x00,
 0x77,0x00,

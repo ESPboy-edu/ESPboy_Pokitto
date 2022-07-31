@@ -1,5 +1,7 @@
 #include "OBS.h"
 #include "../music/OBS_00.h"
+#include "../music/OBS_01.h"
+#include "../music/OBS_02.h"
 #include "sounds/Sounds.h"
 #include "utils/Utils.h"
 
@@ -13,7 +15,7 @@ using PD = Pokitto::Display;
 
 void Game::playTheme(Theme theme, bool loop) {
     #ifdef SOUNDS
-    static PROGMEM const uint8_t dum[1]={0};
+    static const uint8_t dum[1]={0};
     static auto& music = Audio::play<0>(dum);
     //constexpr char themes[3][17] = { "music/OBS_00.raw", "music/OBS_01.raw", "music/OBS_02.raw", };
     switch (this->cookie->sfx) {
@@ -22,8 +24,18 @@ void Game::playTheme(Theme theme, bool loop) {
           //  if (this->mainThemeFile.openRO(themes[static_cast<uint8_t>(theme)])) {
           //      auto& music = Audio::play<0>(this->mainThemeFile);
           //      music.setLoop(loop);
+            if((uint8_t)theme == 2){
+                music = Audio::play<0>(OBS_02);
+                music.setLoop(false);            
+            };
+            if((uint8_t)theme == 0){
                 music = Audio::play<0>(OBS_00);
                 music.setLoop(true);
+            };
+            if((uint8_t)theme == 1){
+                music = Audio::play<0>(OBS_01);
+                music.setLoop(true);
+            };
             break;
         case SoundEffects::SFX:
         case SoundEffects::None:
@@ -62,9 +74,9 @@ void Game::playSoundEffect(SoundEffect soundEffect) {
                 case SoundEffect::Game_Over:
                     Audio::play<1>(Sounds::sfx_Game_Over);    
                     break;
-                //case SoundEffect::Health:
-                    //Audio::play<1>(Sounds::sfx_Health);    
-                 //   break;
+                case SoundEffect::Health:
+                    Audio::play<1>(Sounds::sfx_Health);    
+                    break;
             }
             break;
         default: break;

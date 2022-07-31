@@ -2,7 +2,7 @@
 
 #pragma once
 
-inline constexpr uint8_t BossBullet[] = {
+PROGMEM const uint8_t BossBullet[] = {
 0x06,0x06,
 0xee,0x00,0xee,
 0xe0,0xf8,0x0e,
