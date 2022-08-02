@@ -23,12 +23,11 @@ void HighScores::initialize(){
         s_scores.scores[2] = 0;
     EEPROM.write(10, 'D');
     EEPROM.write(11, 'B');
+    EEPROM.put(12, s_scores);
     EEPROM.commit();      
     }
     else{
-        s_scores.scores[0] = EEPROM.read(12);
-        s_scores.scores[1] = EEPROM.read(13);
-        s_scores.scores[2] = EEPROM.read(14);
+        EEPROM.get(12, s_scores);
     }
 }
 
@@ -43,9 +42,7 @@ bool HighScores::addScore(int value)
                 }
             }
             s_scores.scores[i] = value;
-            EEPROM.write(12, s_scores.scores[0]);
-            EEPROM.write(13, s_scores.scores[1]);
-            EEPROM.write(14, s_scores.scores[2]);
+            EEPROM.put(12, s_scores);
             EEPROM.commit();
             return true;
         }

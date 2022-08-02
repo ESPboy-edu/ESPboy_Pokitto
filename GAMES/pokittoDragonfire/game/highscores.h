@@ -6,7 +6,7 @@
 class HighScores
 {
     struct Scores {
-        int scores[3] = { 0, 0, 0 };
+        uint32_t scores[3] = { 0, 0, 0 };
     } static s_scores;
 
     static float timer;
