@@ -104,6 +104,7 @@ inline constexpr uint32_t POK_LCD_H = 176;
 #define MODE_FAST_16COLOR        2
 #define MODE13                   13
 #define MODE15                   15
+#define MODE16                   16
 #define MIXMODE                  32
 #define TASMODE                  42
 #define TASMODELOW               43
@@ -123,6 +124,8 @@ inline constexpr uint32_t POK_LCD_H = 176;
         #define PROJ_SCREENMODE MODE13
     #elif defined(PROJ_MODE15) && PROJ_MODE15 > 0
         #define PROJ_SCREENMODE MODE15
+    #elif defined(PROJ_MODE16) && PROJ_MODE16 > 0
+        #define PROJ_SCREENMODE MODE16
     #elif defined(PROJ_MIXMODE) && PROJ_MIXMODE > 0
         #define PROJ_SCREENMODE MIXMODE
     #elif defined(PROJ_MODE64) && PROJ_MODE64 > 0
@@ -195,6 +198,13 @@ inline constexpr uint32_t POK_LCD_H = 176;
     #define PROJ_COLORDEPTH 4
 #endif
 
+#if PROJ_SCREENMODE == MODE16
+    #define PROJ_SCREENBUFFERSIZE BUFSIZE_MODE16
+    #define PROJ_LCDWIDTH 220
+    #define PROJ_LCDHEIGHT 176
+    #define PROJ_COLORDEPTH 4
+#endif
+
 #if PROJ_SCREENMODE == MIXMODE
     #define PROJ_SCREENBUFFERSIZE BUFSIZE_MIXMODE
     #define PROJ_COLORDEPTH 8
@@ -236,7 +246,8 @@ inline constexpr uint32_t BUFSIZE_TASMODELOW = 110;
 inline constexpr uint32_t BUFSIZE_HI_4COLOR = ((POK_LCD_H+1)*POK_LCD_W)*POK_COLORDEPTH/8;
 inline constexpr uint32_t BUFSIZE_FAST_16COLOR = (((POK_LCD_H/2)+1)*POK_LCD_W/2)*POK_COLORDEPTH/8;
 inline constexpr uint32_t BUFSIZE_MODE13 = 110*88;
-inline constexpr uint32_t BUFSIZE_MODE15 = 0x4BA0;
+inline constexpr uint32_t BUFSIZE_MODE15 = 220*88;
+inline constexpr uint32_t BUFSIZE_MODE16 = 220*88;
 inline constexpr uint32_t BUFSIZE_MODE64 = 220*88;
 inline constexpr uint32_t BUFSIZE_MIXMODE = 110*88;
 

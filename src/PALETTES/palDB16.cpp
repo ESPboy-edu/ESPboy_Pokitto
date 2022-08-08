@@ -2,7 +2,7 @@
 #include<Arduino.h>
 
 
-const unsigned char paletteDB16[48] = {
+const unsigned char paletteDB16[48] PROGMEM = {
 0x14,0x0C,0x1C, //140c1c
 0x44,0x24,0x34, //442434
 0x30,0x34,0x6D, //30346d

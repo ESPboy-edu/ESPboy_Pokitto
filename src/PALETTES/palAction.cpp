@@ -3,7 +3,7 @@
 
 // A palette with blue and silver gradients and color highlights for shooter games
 
-const unsigned char paletteAction[48] = {
+const unsigned char paletteAction[48] PROGMEM = {
 0x04,0x07,0x1f,
 0x05,0x05,0x5f,
 0x0e,0x09,0x93,

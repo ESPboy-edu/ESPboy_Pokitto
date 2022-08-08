@@ -2,7 +2,7 @@
 #include<Arduino.h>
 
 
-const unsigned char palettePico[16*3] = {
+const unsigned char palettePico[16*3] PROGMEM = {
 	0, 0, 0,
 	29, 43, 83,
 	126, 37, 83,

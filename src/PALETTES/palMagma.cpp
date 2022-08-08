@@ -2,7 +2,7 @@
 #include<Arduino.h>
 
 
-const unsigned char paletteMagma[48] = {
+const unsigned char paletteMagma[48] PROGMEM = {
 0xfb,0xff,0xb2,
 0xfc,0xda,0x90,
 0xfc,0xad,0x6e,

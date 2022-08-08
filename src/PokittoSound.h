@@ -41,21 +41,12 @@
 
 #if (POK_ENABLE_SOUND == 1)
 
-#ifndef MAX_VOL_TEST
+
     #define VOLUME_SPEAKER_MAX 255 //((8<<GLOBVOL_SHIFT)-1)
     #define VOLUME_HEADPHONE_MAX 127
     #define VOLUME_STARTUP VOLUME_HEADPHONE_MAX
-#else
-    #define VOLUME_SPEAKER_MAX 255
-    #define VOLUME_HEADPHONE_MAX VOLUME_SPEAKER_MAX
-    #define VOLUME_STARTUP VOLUME_SPEAKER_MAX
-#endif // MAXVOLTEST
 
-#ifdef POK_SIM
-#define VOLUME_STEP 1
-#else
 #define VOLUME_STEP 8
-#endif
 
 namespace Pokitto {
 
@@ -82,18 +73,8 @@ public:
     // Headphonemode
     static inline uint8_t headPhoneLevel = 1; // a workaround to disappearing sound at low volume
 
-    static void setMaxVol(int v) {
-        if (v < 0) v = 0; //prevent nasty wraparound
-        if (v > VOLUME_SPEAKER_MAX) {
-            v = VOLUME_SPEAKER_MAX;
-        }
-        volumeMax = v;
-        setVolume(globalVolume);
-    }
-
-    static uint16_t getMaxVol() {
-        return volumeMax;
-    }
+    static void setMaxVol(int v) {}
+    static uint16_t getMaxVol() {return volumeMax;}
 
     static void volumeUp();
     static void volumeDown();
@@ -105,7 +86,7 @@ public:
     static void playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmode);
     static void playTone(uint8_t os, uint16_t freq, uint8_t volume, uint32_t duration);
 
-    static uint8_t ampIsOn(){ return true; }
+    static uint8_t ampIsOn(){return true;}
     static void ampEnable(uint8_t){}
 
     static int playMusicStream(const char* filename, uint8_t options){
@@ -121,14 +102,9 @@ public:
     static uint32_t getMusicStreamElapsedMilliSec();
 
     static inline uint16_t globalVolume;
-    static void setVolume(int16_t volume){
-	if (volume<0) volume = 0;
-	globalVolume = volume;
-    }
+    static void setVolume(int16_t volume){}
 
-    static uint16_t getVolume(){
-	return globalVolume;
-    }
+    static uint16_t getVolume(){return globalVolume;}
 };
 
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-PROGMEM const uint8_t miloslav[] = {
+PROGMEM const uint8_t miloslav[] PROGMEM = {
     0, 0, 0,
     32, 36, 32,
     72, 72, 72,

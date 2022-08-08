@@ -2,7 +2,7 @@
 #include<Arduino.h>
 
 
-const unsigned char paletteGameboy[48] = {
+const unsigned char paletteGameboy[48] PROGMEM = {
 //original grayscale
 0xFF,0xFF,0xFF, //white
 0xAA,0xAA,0xAA, //light gray

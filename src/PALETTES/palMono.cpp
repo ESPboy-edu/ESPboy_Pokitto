@@ -2,7 +2,7 @@
 #include<Arduino.h>
 
 
-const unsigned char paletteMono[48] = {
+const unsigned char paletteMono[48] PROGMEM = {
 0xFF,0xFF,0xFF, //white
 0xAA,0xAA,0xAA, //light gray
 0x55,0x55,0x55, //dark gray

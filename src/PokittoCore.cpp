@@ -42,15 +42,11 @@
 #include "PokittoLogos.h"
 #include <stdlib.h>
 #include "ESPboyInit.h"
-//#include "ESPboyTerminalGUI.h"
-//#include "ESPboyOTA2.h"
 
 
 ESPboyInit myESPboy;
 //ESPboyTerminalGUI *terminalGUIobj = NULL;
 //ESPboyOTA2 *OTA2obj = NULL;
-
-//char selectedfile[25];
 
 using namespace Pokitto;
 
@@ -72,14 +68,13 @@ extern uint8_t *Display::screenbuffer;
 
 void Core::begin() {
     myESPboy.begin("Pokitto");
-    //LittleFS.begin();
-  
+/*  
       //Check OTA2
-//  if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
-//     terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
-//     OTA2obj = new ESPboyOTA2(terminalGUIobj);
-//  }
-      
+  if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
+     terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
+     OTA2obj = new ESPboyOTA2(terminalGUIobj);
+  }
+ */     
    #if PROJ_SCREENMODE != TASMODE
      Display::screenbuffer = new uint8_t[POK_SCREENBUFFERSIZE]; // maximum resolution
    #endif // TASMODE    

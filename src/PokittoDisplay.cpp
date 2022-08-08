@@ -118,32 +118,41 @@ void lcdRefreshMode64( const uint8_t *scrbuf, const uint16_t* paletteptr ){myESP
 
 
 
-//220x176 rescale to 128x128
-/*void lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* paletteptr){
+//220x176 clipping to 128x128
+#define DX PROJ_MODE16_OFFSET_X
+#define DY PROJ_MODE16_OFFSET_Y
+
+void IRAM_ATTR lcdRefreshMode16(const uint8_t *scrbuf, const uint16_t* paletteptr){
    static uint16_t bufLine[128] __attribute__ ((aligned));
    uint8_t readByte;
    uint16_t addr;
 
   myESPboy.tft.setAddrWindow(0, 0, 128, 128);
-  float xd = 220.0/128.0, yd = 176.0/128.0, xxd;
 
   for (uint8_t yyy=0; yyy<128; yyy++){
-    xxd=((uint16_t)((float)(yyy)*yd))*220;
+      addr=(DY+yyy)*220+DX;
     for(int xxx=0; xxx<128; xxx++){
-      addr = (uint16_t)xxd;
-      xxd += xd;
       readByte=scrbuf[addr/2];
       if(addr%2)bufLine[xxx] = paletteptr[readByte&15];
       else bufLine[xxx] = paletteptr[readByte>>4];
+      addr++;
     }
     myESPboy.tft.pushColors(bufLine, 128);
   }
-};*/
+};
 
 
+//220x176 fast rescale to 128x128
 void IRAM_ATTR lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* paletteptr){
-  uint16_t bufLine[128] __attribute__ ((aligned));
-
+  
+  static uint16_t *bufLine = NULL;
+  static bool initFlag = false;
+  
+  if(initFlag == false){
+    initFlag = true;
+    bufLine = new uint16_t[128];
+  };
+  
   myESPboy.tft.setAddrWindow(0, 0, 128, 128);
   
   for (auto yyy=0; yyy<128; yyy++){
@@ -161,7 +170,12 @@ void IRAM_ATTR lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* palettept
 
 //110x88
 void IRAM_ATTR lcdRefreshMode13(const uint8_t *scrbuf, const uint16_t* paletteptr, uint8_t offset){
-   static uint16_t bufLine[LCDWIDTH] __attribute__ ((aligned));
+   static uint16_t *bufLine = NULL;
+   static bool initFlag = false;  
+   if(initFlag == false){
+     initFlag = true;
+     bufLine = new uint16_t[LCDWIDTH];
+  };
    uint16_t addr=0;
    myESPboy.tft.setAddrWindow(X_OFFSET, Y_OFFSET, LCDWIDTH, LCDHEIGHT);
     for(uint8_t y=0; y<LCDHEIGHT; y++){
@@ -173,7 +187,12 @@ void IRAM_ATTR lcdRefreshMode13(const uint8_t *scrbuf, const uint16_t* palettept
 
 //110x88
 void IRAM_ATTR lcdRefreshMode2(const uint8_t* scrbuf, const uint16_t* paletteptr ){
-   static uint16_t bufLine[LCDWIDTH] __attribute__ ((aligned));
+   static uint16_t *bufLine = NULL;
+   static bool initFlag = false;  
+   if(initFlag == false){
+     initFlag = true;
+     bufLine = new uint16_t[LCDWIDTH];
+  };
    uint8_t readByte;
    uint16_t addr=0;
    myESPboy.tft.setAddrWindow(X_OFFSET, Y_OFFSET, LCDWIDTH, LCDHEIGHT);
@@ -1166,6 +1185,10 @@ void Display::lcdRefresh(const unsigned char* scr, bool useDirectDrawMode) {
 
 #if PROJ_SCREENMODE == MODE15
     lcdRefreshMode15(scr, paletteptr);
+#endif
+
+#if PROJ_SCREENMODE == MODE16
+    lcdRefreshMode16(scr, paletteptr);
 #endif
 
 #if PROJ_SCREENMODE == MIXMODE

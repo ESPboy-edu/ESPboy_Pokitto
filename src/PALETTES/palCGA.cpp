@@ -2,7 +2,7 @@
 #include<Arduino.h>
 
 
-const unsigned char paletteCGA[48] = {
+const unsigned char paletteCGA[48] PROGMEM = {
 0x00,0x00,0x00, //black
 0xFF,0xFF,0xFF, //white
 0xff,0x00,0xff, //magenta
