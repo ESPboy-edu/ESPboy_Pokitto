@@ -50,24 +50,9 @@
 
 
 /** SOND CONFIGURATION **/
-#ifndef PROJ_AUD_FREQ
-    #define POK_AUD_FREQ 22050 //Valid values: 8000, 11025, 16000, 22050 // audio update frequency in Hz
-#else
-    #define POK_AUD_FREQ PROJ_AUD_FREQ
-#endif
-
-#ifndef PROJ_ENABLE_SOUND
-    #define POK_ENABLE_SOUND 1
-#else
-    #define POK_ENABLE_SOUND PROJ_ENABLE_SOUND
-#endif
-
-
-#ifndef PROJ_SOUND_BUFFERED
-    #define POK_SOUND_BUFFERED 0
-#else
-    #define POK_SOUND_BUFFERED PROJ_SOUND_BUFFERED
-#endif
+   #define POK_AUD_FREQ PROJ_AUD_FREQ
+   #define POK_ENABLE_SOUND PROJ_ENABLE_SOUND
+   #define POK_SOUND_BUFFERED PROJ_SOUND_BUFFERED
 
 #ifndef NUM_CHANNELS
     #define NUM_CHANNELS 2
@@ -88,7 +73,10 @@ inline constexpr bool POK_PERSISTENCE = PROJ_PERSISTENCE;
 #define PROJ_CLEAR_SCREEN 0
 inline constexpr uint32_t POK_CLEAR_SCREEN = PROJ_CLEAR_SCREEN;
 
-#define PROJ_FPS 40
+#ifndef PROJ_FPS
+  #define PROJ_FPS 40
+#endif
+
 inline constexpr uint32_t POK_FPS = PROJ_FPS;
 inline constexpr uint32_t POK_FRAMEDURATION = 1000 / PROJ_FPS;
 
@@ -110,36 +98,10 @@ inline constexpr uint32_t POK_LCD_H = 176;
 #define TASMODELOW               43
 #define MODE64                   64
 
-/** SCREENMODE - USE THIS SELECTION FOR YOUR PROJECT **/
 #ifndef PROJ_SCREENMODE
-    #if defined(PROJ_HIRES) &&  PROJ_HIRES > 0
-        #define PROJ_SCREENMODE MODE_HI_4COLOR
-    #elif defined(PROJ_HICOLOR) && PROJ_HICOLOR > 0
-        #define PROJ_SCREENMODE MODE13
-    #elif defined(PROJ_TASMODE) && PROJ_TASMODE > 0
-        #define PROJ_SCREENMODE TASMODE
-    #elif defined(PROJ_TASMODELOW) && PROJ_TASMODELOW > 0
-        #define PROJ_SCREENMODE TASMODELOW
-    #elif defined(PROJ_MODE13) && PROJ_MODE13 > 0
-        #define PROJ_SCREENMODE MODE13
-    #elif defined(PROJ_MODE15) && PROJ_MODE15 > 0
-        #define PROJ_SCREENMODE MODE15
-    #elif defined(PROJ_MODE16) && PROJ_MODE16 > 0
-        #define PROJ_SCREENMODE MODE16
-    #elif defined(PROJ_MIXMODE) && PROJ_MIXMODE > 0
-        #define PROJ_SCREENMODE MIXMODE
-    #elif defined(PROJ_MODE64) && PROJ_MODE64 > 0
-        #define PROJ_SCREENMODE MODE64
-    #else
-        #define PROJ_SCREENMODE MODE_FAST_16COLOR
-    #endif
-#endif // POK_TILEDMODE
-
-
-#if PROJ_SCREENMODE == MODE_NOBUFFER
-    #define PROJ_SCREENBUFFERSIZE BUFSIZE_NOBUFFER
-    #define PROJ_COLORDEPTH 8
+  #error "PROJ_SCREENMODE not defined! define it in the Pokitto library ESPboy_Pikitto/src/My_settings.h"
 #endif
+
 
 #if PROJ_SCREENMODE == TASMODELOW
     #undef PROJ_SCREENMODE
@@ -198,12 +160,19 @@ inline constexpr uint32_t POK_LCD_H = 176;
     #define PROJ_COLORDEPTH 4
 #endif
 
+
+#if PROJ_SCREENMODE == MODE15_240x240 
+    #define PROJ_SCREENBUFFERSIZE BUFSIZE_MODE15
+    #define PROJ_COLORDEPTH 4
+#endif
+
 #if PROJ_SCREENMODE == MODE16
     #define PROJ_SCREENBUFFERSIZE BUFSIZE_MODE16
     #define PROJ_LCDWIDTH 220
     #define PROJ_LCDHEIGHT 176
     #define PROJ_COLORDEPTH 4
 #endif
+
 
 #if PROJ_SCREENMODE == MIXMODE
     #define PROJ_SCREENBUFFERSIZE BUFSIZE_MIXMODE
@@ -263,7 +232,7 @@ inline constexpr uint32_t YCENTER = LCDHEIGHT / 2;
 	#if (PROJ_SCREENMODE == MIXMODE)
 		#define PROJ_PALETTE_SIZE 276;
 	#else
-		#define PROJ_PALETTE_SIZE 1<<PROJ_COLORDEPTH
+		#define PROJ_PALETTE_SIZE ((1<<PROJ_COLORDEPTH))
 	#endif
 #endif
 

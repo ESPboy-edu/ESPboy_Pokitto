@@ -75,16 +75,13 @@ POSSIBILITY OF SUCH DAMAGE.
 //#include "PokittoSound.h"
 #include "ESPboyInit.h"
 
+
 extern ESPboyInit myESPboy;
 #define X_OFFSET 9
 #define Y_OFFSET 20
 
-
-
 void CheckStack(){};
 void ShowCrashScreenAndWait( const char* texLine1, const char* texLine2, const char* texLine3, const char* texLine4, const char* texLine5 ) {};
-
-
 
 using core = Pokitto::Core;
 //using _pdsound = Pokitto::Sound;
@@ -96,6 +93,7 @@ void lcdInit(){
   //myESPboy.tft.fillScreen(TFT_GREEN);
   //delay(50);
   myESPboy.tft.fillScreen(TFT_BLACK);
+  Pokitto::Display::paletteptr = &Pokitto::Display::palette[0];
 };
 
 void lcdFillSurface(uint16_t c){
@@ -112,22 +110,40 @@ void lcdRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color
 };
 
 
-void lcdTile(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t* gfx){myESPboy.tft.drawString("NO TAS mode yet",0,0);};
+void lcdTile(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t* gfx){
+//ToDo Sim versions for these
+	/*int width=x1-x0;
+	int height=y1-y0;
+	if (x0 > POK_LCD_W) return;
+	if (y0 > POK_LCD_H) return;
+	if (x0 < 0) x0=0;
+	if (y0 < 0) y0=0;
+
+	setWindow(y0, x0, y1-1, x1-1);
+    write_command(0x22);
+
+    for (int x=0; x<=width*height-1;x++) {
+        write_data(gfx[x]);
+    }
+	setWindow(0, 0, 175, 219);*/
+}
+
+
 void lcdRefreshMixMode(const uint8_t *screenBuffer, const uint16_t * palettePointer, const uint8_t * scanType){myESPboy.tft.drawString("NO MixMode yet",0,0);};
 void lcdRefreshMode64( const uint8_t *scrbuf, const uint16_t* paletteptr ){myESPboy.tft.drawString("NO Mode64 yet",0,0);};
 
 
 
 //220x176 clipping to 128x128
-#define DX PROJ_MODE16_OFFSET_X
-#define DY PROJ_MODE16_OFFSET_Y
-
 void IRAM_ATTR lcdRefreshMode16(const uint8_t *scrbuf, const uint16_t* paletteptr){
+   #define DX PROJ_MODE16_OFFSET_X
+   #define DY PROJ_MODE16_OFFSET_Y
    static uint16_t bufLine[128] __attribute__ ((aligned));
    uint8_t readByte;
    uint16_t addr;
 
   myESPboy.tft.setAddrWindow(0, 0, 128, 128);
+  myESPboy.tft.startWrite();
 
   for (uint8_t yyy=0; yyy<128; yyy++){
       addr=(DY+yyy)*220+DX;
@@ -139,7 +155,34 @@ void IRAM_ATTR lcdRefreshMode16(const uint8_t *scrbuf, const uint16_t* palettept
     }
     myESPboy.tft.pushColors(bufLine, 128);
   }
+  myESPboy.tft.endWrite();
 };
+
+
+//220x176 for display 240x240
+
+void IRAM_ATTR lcdRefreshMode15_240x240(const uint8_t *scrbuf, const uint16_t* paletteptr){
+  #define DX_240x240 ((240-220)/2)
+  #define DY_240x240 ((240-176)/2)
+   static uint16_t bufLine[220] __attribute__ ((aligned));
+   uint8_t readByte;
+   uint16_t addr;
+
+  myESPboy.tft.setAddrWindow(DX_240x240, DY_240x240, 220, 176);
+  myESPboy.tft.startWrite();
+  addr=0;
+  for (uint8_t yyy=0; yyy<176; yyy++){
+    for(int xxx=0; xxx<220; xxx++){
+      readByte=scrbuf[addr/2];
+      if(addr%2)bufLine[xxx] = paletteptr[readByte&15];
+      else bufLine[xxx] = paletteptr[readByte>>4];
+      addr++;
+    }
+    myESPboy.tft.pushColors(bufLine, 220);
+  }
+  myESPboy.tft.endWrite();
+};
+
 
 
 //220x176 fast rescale to 128x128
@@ -154,6 +197,7 @@ void IRAM_ATTR lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* palettept
   };
   
   myESPboy.tft.setAddrWindow(0, 0, 128, 128);
+  myESPboy.tft.startWrite();
   
   for (auto yyy=0; yyy<128; yyy++){
     uint32_t xxd = ((yyy*176)>>7) * 220;
@@ -165,6 +209,7 @@ void IRAM_ATTR lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* palettept
     }
     myESPboy.tft.pushColors(bufLine, 128);
   }
+  myESPboy.tft.endWrite();
 };
 
 
@@ -178,10 +223,12 @@ void IRAM_ATTR lcdRefreshMode13(const uint8_t *scrbuf, const uint16_t* palettept
   };
    uint16_t addr=0;
    myESPboy.tft.setAddrWindow(X_OFFSET, Y_OFFSET, LCDWIDTH, LCDHEIGHT);
+   myESPboy.tft.startWrite();
     for(uint8_t y=0; y<LCDHEIGHT; y++){
      for(uint8_t x=0; x<LCDWIDTH; x++)
        bufLine[x]=paletteptr[scrbuf[addr++]];
      myESPboy.tft.pushColors(bufLine, Display::width);}
+   myESPboy.tft.endWrite();
 };
 
 
@@ -196,6 +243,7 @@ void IRAM_ATTR lcdRefreshMode2(const uint8_t* scrbuf, const uint16_t* paletteptr
    uint8_t readByte;
    uint16_t addr=0;
    myESPboy.tft.setAddrWindow(X_OFFSET, Y_OFFSET, LCDWIDTH, LCDHEIGHT);
+   myESPboy.tft.startWrite();
     for(uint8_t y=0; y<LCDHEIGHT; y++){
      for(uint8_t x=0; x<LCDWIDTH; x+=2){
        readByte=scrbuf[addr++];
@@ -204,6 +252,7 @@ void IRAM_ATTR lcdRefreshMode2(const uint8_t* scrbuf, const uint16_t* paletteptr
      }
      myESPboy.tft.pushColors(bufLine, Display::width);
    }
+   myESPboy.tft.endWrite();
 };
 
 
@@ -239,7 +288,7 @@ uint8_t Display::width = LCDWIDTH;
 uint8_t Display::height = LCDHEIGHT;
 
 #if PROJ_SCREENMODE != TASMODE
-//uint8_t __attribute__ ((aligned)) Display::screenbuffer[POK_SCREENBUFFERSIZE]; // maximum resolution
+  uint8_t __attribute__ ((aligned)) Display::screenbuffer[POK_SCREENBUFFERSIZE]; // maximum resolution
 #endif // TASMODE
 
 uint16_t Display::getWidth() {
@@ -319,11 +368,11 @@ void Display::setCursor(int16_t x,int16_t y) {
  */
 void Display::update(bool useDirectDrawMode) {
     if (!useDirectDrawMode)
-	    #if POK_SCREENMODE == MIXMODE
-		  lcdRefreshMixMode(m_scrbuf, paletteptr, scanType);
-	    #else
+	    //#if POK_SCREENMODE == MIXMODE
+		//  lcdRefreshMixMode(m_scrbuf, paletteptr, scanType);
+	    //#else
 		  lcdRefresh(m_scrbuf, useDirectDrawMode);
-	    #endif
+	    //#endif
   
 
     #ifndef PERSISTENCE
@@ -1163,16 +1212,14 @@ void Display::printFloat(double number, uint8_t digits)
 }
 
 void Display::lcdRefresh(const unsigned char* scr, bool useDirectDrawMode) {
-    if (useDirectDrawMode)
-        return;
-#if (PROJ_SCREENMODE != MODE_NOBUFFER) && !defined(POK_SIM)
-    lcdPrepareRefresh();
-#endif
+//    if (useDirectDrawMode)
+//        return;
+//#if (PROJ_SCREENMODE != MODE_NOBUFFER) && !defined(POK_SIM)
+//    lcdPrepareRefresh();
+//#endif
+
 #if PROJ_SCREENMODE == TASMODE
-    lcdRefreshTASMode(paletteptr);
-    #ifdef POK_SIM
-    simulator.refreshDisplay();
-    #endif
+    TAS::lcdRefreshTASMode(paletteptr);
 #endif
 
 #if PROJ_SCREENMODE == MODE_HI_4COLOR
@@ -1203,12 +1250,14 @@ void Display::lcdRefresh(const unsigned char* scr, bool useDirectDrawMode) {
     lcdRefreshMode2((uint8_t*)scr, paletteptr);
 #endif
 
+#if PROJ_SCREENMODE == MODE15_240x240     
+    lcdRefreshMode15_240x240(scr, paletteptr);
+#endif
 }
 
 void Display::setFrameBufferTo(uint8_t* sb) {
     m_scrbuf = sb;
 };
-
 
 
 /** Eof */

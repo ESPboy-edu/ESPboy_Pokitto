@@ -6,6 +6,18 @@ v1.0
 */
 
 #include "ESPboyInit.h"
+#include "Pokitto_settings.h"
+
+#if PROJ_SCREENMODE == MODE15_240x240
+  #define DISPLAY240x240
+  #define RES_X 240
+  #define RES_Y 240
+#else
+  #define RES_X 128
+  #define RES_Y 128
+#endif
+
+
 
 ESPboyInit::ESPboyInit(){};
 
@@ -47,21 +59,25 @@ void ESPboyInit::begin(const char *appName) {
   tft.fillScreen(TFT_BLACK);
 
 //draw ESPboylogo  
-  tft.drawXBitmap(30, 24, ESPboyLogo, 68, 64, TFT_YELLOW);
+  tft.drawXBitmap((RES_X-68)/2, (RES_Y-80)/2, ESPboyLogo, 68, 64, TFT_YELLOW);
   tft.setTextSize(1);
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-  tft.drawString (appName, (128-(strlen(appName)*6))/2, 102);
+  tft.drawString (appName, (RES_X-(strlen(appName)*6))/2, (RES_Y-80)/2+78);
 
 //LCD backlit fading on
+#ifndef DISPLAY240x240
   for (uint16_t bcklt=300; bcklt<4095; bcklt+=30){
     dac.setVoltage(bcklt, false);
     delay(10);}
-
+#endif
   delay(1000);
 
 //clear TFT and backlit on high
-  dac.setVoltage(4095, true);
+
+#ifndef DISPLAY240x240
+  dac.setVoltage(4095, false);
   tft.fillScreen(TFT_BLACK);
+#endif
 };
 
 

@@ -69,6 +69,13 @@ namespace Pokitto {
  * @endcode
  */
 
+
+//GB compatibility
+#define KEYBOARD_W 16
+#define KEYBOARD_H 8
+#define ENABLE_GUI 1
+
+
 class Core
 {
 public:
@@ -199,7 +206,8 @@ public:
     static bool collidePointRect(int16_t x1, int16_t y1 ,int16_t x2 ,int16_t y2, int16_t w, int16_t h);
 	static bool collideRectRect(int16_t x1, int16_t y1, int16_t w1, int16_t h1 ,int16_t x2 ,int16_t y2, int16_t w2, int16_t h2);
     static bool collideBitmapBitmap(int16_t x1, int16_t y1, const uint8_t* b1, int16_t x2, int16_t y2, const uint8_t* b2);
-
+    static void keyboard(char* text, uint8_t length);
+    static int8_t menu(const char* const* items, uint8_t length);
 };
 
 // this is the instance used by the system

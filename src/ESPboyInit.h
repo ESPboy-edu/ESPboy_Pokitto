@@ -4,7 +4,6 @@ for www.ESPboy.com project by RomanS
 https://hackaday.io/project/164830-espboy-games-iot-stem-for-education-fun
 v1.0
 */
-
 #ifndef ESPboy_Init
 #define ESPboy_Init
 

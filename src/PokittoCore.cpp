@@ -34,19 +34,19 @@
 */
 /**************************************************************************/
 
-#include "Pokitto_settings.h"
+#include "ESPboyInit.h"
 #include "PokittoCore.h"
 
 #include "PokittoFonts.h"
 #include "PokittoTimer.h"
 #include "PokittoLogos.h"
 #include <stdlib.h>
-#include "ESPboyInit.h"
 
 
 ESPboyInit myESPboy;
-//ESPboyTerminalGUI *terminalGUIobj = NULL;
-//ESPboyOTA2 *OTA2obj = NULL;
+
+
+//char selectedfile[25];
 
 using namespace Pokitto;
 
@@ -64,17 +64,16 @@ Buttons Core::buttons;
 #endif
 Display Core::display;
 
-extern uint8_t *Display::screenbuffer;
+#if PROJ_SCREENMODE != TASMODE
+  extern uint8_t *Display::screenbuffer;
+#endif
+
 
 void Core::begin() {
     myESPboy.begin("Pokitto");
-/*  
-      //Check OTA2
-  if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
-     terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
-     OTA2obj = new ESPboyOTA2(terminalGUIobj);
-  }
- */     
+    //LittleFS.begin();
+  
+      
    #if PROJ_SCREENMODE != TASMODE
      Display::screenbuffer = new uint8_t[POK_SCREENBUFFERSIZE]; // maximum resolution
    #endif // TASMODE    
@@ -125,7 +124,11 @@ void Core::initDisplay() {
 void Core::showLogo() {
 // 128x43
     myESPboy.tft.fillScreen(TFT_BLACK);
-    myESPboy.tft.drawXBitmap(0, 40, Pokitto_logo, 128, 43, TFT_GREEN, TFT_BLACK);      
+    #if PROJ_SCREENMODE == MODE15_240x240
+      myESPboy.tft.drawXBitmap((240-128)/2, 80, Pokitto_logo, 128, 43, TFT_GREEN, TFT_BLACK); 
+    #else
+      myESPboy.tft.drawXBitmap(0, 40, Pokitto_logo, 128, 43, TFT_GREEN, TFT_BLACK);      
+	#endif
 	delay(2000);
 }
 
@@ -140,6 +143,213 @@ void Core::titleScreen(const char* name){}
 void Core::titleScreen(const uint8_t* logo){}
 void Core::titleScreen(){}
 void Core::titleScreen(const char*  name, const uint8_t *logo){}
+
+
+int8_t Core::menu(const char* const* items, uint8_t length) {
+if (display.color>3) display.color=1;
+#if (ENABLE_GUI > 0)
+	display.persistence = false;
+	int8_t activeItem = 0;
+	int16_t currentY = display.height;
+	int16_t targetY = 0, rowh = display.fontHeight + 2;
+	boolean exit = false;
+	int8_t answer = -1;
+	while (isRunning()) {
+		if (update()) {
+			if (buttons.pressed(BTN_A) || buttons.pressed(BTN_B) || buttons.pressed(BTN_C)) {
+				exit = true; //time to exit menu !
+				targetY = - display.fontHeight * length - 2; //send the menu out of the screen
+				if (buttons.pressed(BTN_A)) {
+					answer = activeItem;
+					//sound.playOK();
+				} else {
+					//sound.playCancel();
+				}
+			}
+			if (exit == false) {
+				if (buttons.repeat(BTN_DOWN,4)) {
+					activeItem++;
+					//sound.playTick();
+				}
+				if (buttons.repeat(BTN_UP,4)) {
+					activeItem--;
+					//sound.playTick();
+				}
+				//don't go out of the menu
+				if (activeItem == length) activeItem = 0;
+				if (activeItem < 0) activeItem = length - 1;
+
+				targetY = -rowh * activeItem + (rowh+4); //center the menu on the active item
+			} else { //exit :
+				if ((currentY - targetY) <= 1)
+				return (answer);
+			}
+			//draw a fancy menu
+			currentY = (currentY + targetY) / 2;
+			display.cursorX = 0;
+			display.cursorY = currentY;
+			display.textWrap = false;
+			uint16_t fc,bc;
+			fc = display.color;
+            bc = display.bgcolor;
+			for (byte i = 0; i < length; i++) {
+				display.cursorY = currentY + rowh * i;
+				if (i == activeItem){
+					display.cursorX = 3;
+
+                    //display.fillRoundRect(0, currentY + display.fontHeight * activeItem - 2, LCDWIDTH, (display.fontHeight+3), 3);
+                    display.fillRect(0, currentY + rowh * activeItem - 2, LCDWIDTH, (rowh));
+                    display.setColor(bc,fc);
+				} else display.setColor(fc,bc);
+
+				display.println((char*)*(const unsigned int*)(items+i));
+				display.setColor(fc,bc);
+			}
+
+		}
+	}
+#else
+	return 0;
+#endif
+	return 0;
+}
+
+
+void Core::keyboard(char* text, uint8_t length) {
+#if (ENABLE_GUI > 0)
+	display.persistence = false;
+	//memset(text, 0, length); //clear the text
+	text[length-1] = '\0';
+	//active character in the typing area
+	int8_t activeChar = 0;
+	//selected char on the keyboard
+	int8_t activeX = 0;
+	int8_t activeY = 2;
+	//position of the keyboard on the screen
+	int8_t currentX = LCDWIDTH;
+	int8_t currentY = LCDHEIGHT;
+	int8_t targetX = 0;
+	int8_t targetY = 0;
+
+	while (1) {
+		if (update()) {
+			//move the character selector
+			if (buttons.repeat(BTN_DOWN, 4)) {
+				activeY++;
+				//sound.playTick();
+			}
+			if (buttons.repeat(BTN_UP, 4)) {
+				activeY--;
+				//sound.playTick();
+			}
+			if (buttons.repeat(BTN_RIGHT, 4)) {
+				activeX++;
+				//sound.playTick();
+			}
+			if (buttons.repeat(BTN_LEFT, 4)) {
+				activeX--;
+				//sound.playTick();
+			}
+			//don't go out of the keyboard
+			if (activeX == KEYBOARD_W) activeX = 0;
+			if (activeX < 0) activeX = KEYBOARD_W - 1;
+			if (activeY == KEYBOARD_H) activeY = 0;
+			if (activeY < 0) activeY = KEYBOARD_H - 1;
+			//set the keyboard position on screen
+			targetX = -(display.fontWidth+1) * activeX + LCDWIDTH / 2 - 3;
+			targetY = -(display.fontHeight+1) * activeY + LCDHEIGHT / 2 - 4 - display.fontHeight;
+			//smooth the keyboard displacement
+			currentX = (targetX + currentX) / 2;
+			currentY = (targetY + currentY) / 2;
+			//type character
+			if (buttons.pressed(BTN_A)) {
+				if (activeChar < (length-1)) {
+					byte thisChar = activeX + KEYBOARD_W * activeY;
+					if((thisChar == 0)||(thisChar == 10)||(thisChar == 13)) //avoid line feed and carriage return
+					continue;
+					text[activeChar] = thisChar;
+					text[activeChar+1] = '\0';
+				}
+				activeChar++;
+				//sound.playOK();
+				if (activeChar > length)
+				activeChar = length;
+			}
+			//erase character
+			if (buttons.pressed(BTN_B)) {
+				activeChar--;
+				//sound.playCancel();
+				if (activeChar >= 0)
+				text[activeChar] = 0;
+				else
+				activeChar = 0;
+			}
+			//leave menu
+			if (buttons.pressed(BTN_C)) {
+				//sound.playOK();
+				while (1) {
+					if (update()) {
+						//display.setCursor(0,0);
+						display.println(("You entered\n"));
+						display.print(text);
+						display.println(("\n\n\n\x15:okay \x16:edit"));
+						if(buttons.pressed(BTN_A)){
+							//sound.playOK();
+							return;
+						}
+						if(buttons.pressed(BTN_B)){
+							//sound.playCancel();
+							break;
+						}
+					}
+				}
+			}
+			//draw the keyboard
+			for (int8_t y = 0; y < KEYBOARD_H; y++) {
+				for (int8_t x = 0; x < KEYBOARD_W; x++) {
+					display.drawChar(currentX + x * (display.fontWidth+1), currentY + y * (display.fontHeight+1), x + y * KEYBOARD_W, 1);
+				}
+			}
+			//draw instruction
+			display.cursorX = currentX-display.fontWidth*6-2;
+			display.cursorY = currentY+1*(display.fontHeight+1);
+			display.print(("\25type"));
+
+			display.cursorX = currentX-display.fontWidth*6-2;
+			display.cursorY = currentY+2*(display.fontHeight+1);
+			display.print(("\26back"));
+
+			display.cursorX = currentX-display.fontWidth*6-2;
+			display.cursorY = currentY+3*(display.fontHeight+1);
+			display.print(("\27save"));
+
+			//erase some pixels around the selected character
+			display.setColor(WHITE);
+			display.drawFastHLine(currentX + activeX * (display.fontWidth+1) - 1, currentY + activeY * (display.fontHeight+1) - 2, 7);
+			//draw the selection rectangle
+			display.setColor(BLACK);
+			display.drawRoundRect(currentX + activeX * (display.fontWidth+1) - 2, currentY + activeY * (display.fontHeight+1) - 3, (display.fontWidth+2)+(display.fontWidth-1)%2, (display.fontHeight+5), 3);
+			//draw keyboard outline
+			//display.drawRoundRect(currentX - 6, currentY - 6, KEYBOARD_W * (display.fontWidth+1) + 12, KEYBOARD_H * (display.fontHeight+1) + 12, 8, BLACK);
+			//text field
+			display.drawFastHLine(0, LCDHEIGHT-display.fontHeight-2, LCDWIDTH);
+			display.setColor(WHITE);
+			display.fillRect(0, LCDHEIGHT-display.fontHeight-1, LCDWIDTH, display.fontHeight+1);
+			//typed text
+			display.cursorX = 0;
+			display.cursorY = LCDHEIGHT-display.fontHeight;
+			display.setColor(BLACK);
+			display.print(text);
+			//blinking cursor
+			if (((frameCount % 8) < 4) && (activeChar < (length-1)))
+			display.drawChar(display.fontWidth * activeChar, LCDHEIGHT-display.fontHeight, '_',1);
+		}
+	}
+#endif
+}
+
+
+
 
 
 /**

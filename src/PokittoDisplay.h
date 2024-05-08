@@ -72,6 +72,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "Pokitto_settings.h"
 #include "PokittoFonts.h"
 #include "PokittoPalettes.h"
+#include "TASMODE.h"
+
 
 // Basic Color definitions
 #define	COLOR_BLACK                         (uint16_t)(0x0000)
@@ -138,9 +140,6 @@ const uint16_t def565palette[16] PROGMEM = {
 #include <stdlib.h>
 #include <string.h>
 
-//#if PROJ_SCREENMODE == TASMODE
-//#include "TASMODE.h"
-//#endif
 
 void lcdPrepareRefresh();
 void lcdInit();
@@ -149,6 +148,7 @@ void lcdPixel(int16_t x, int16_t y, uint16_t color);
 void lcdRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
 void lcdRefreshMode13(const uint8_t* scrbuf, const uint16_t* paletteptr, uint8_t offset);
 void lcdRefreshMode15(const uint8_t* scrbuf, const uint16_t* paletteptr);
+void lcdRefreshMode15_240x240(const uint8_t* scrbuf, const uint16_t* paletteptr);
 void lcdRefreshMixMode(const uint8_t * screenBuffer, const uint16_t * palettePointer, const uint8_t * scanType);
 void lcdRefreshMode64( const uint8_t* scrbuf, const uint16_t* paletteptr );
 void lcdRefreshMode2(const uint8_t* scrbuf, const uint16_t* paletteptr );
