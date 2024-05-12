@@ -36,6 +36,28 @@ struct Sprite {
 };
 
 
+namespace TAS {
+void pixelCopy(uint8_t* dest, const uint8_t *src, uint32_t count, uint32_t recolor) {
+    while (count--) {
+        if (*src !=0 ) *dest = *src + recolor;
+        src++; dest++; //to next pixel
+    }
+}
+}
+
+
+namespace TAS {
+void pixelCopyMirror(uint8_t* dest, const uint8_t *src, uint32_t count, uint32_t recolor) {
+    src += count - 1;
+    while (count--) {
+        if (*src !=0 ) *dest = *src + recolor;
+        src--; dest++; //to next pixel
+    }
+}
+}
+
+
+namespace TAS {
 void pixelCopySolid4BPP(uint8_t *line, const uint8_t *src, uint32_t w, uint32_t sx){
     while(w--){
         auto b = (sx&1)?
@@ -46,13 +68,16 @@ void pixelCopySolid4BPP(uint8_t *line, const uint8_t *src, uint32_t w, uint32_t 
         sx++;
     }
 }
+}
 
 
+namespace TAS {
 void pixelCopySolid(uint8_t* dest, const uint8_t *src, uint32_t count, uint32_t recolor) {
     while (count--) {
         *dest = *src + recolor;
         src++; dest++; //to next pixel
     }
+}
 }
 
 namespace TAS {
