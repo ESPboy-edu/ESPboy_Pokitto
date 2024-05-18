@@ -136,7 +136,7 @@ void loadSokLev(int lev){
     int ldOffset = 10; // how far in to the level data to place the new level to avoid over-scrolling the screen
 
     int x,y;
-    memset(curLevel, 0, sizeof(curLevel));
+    memset(curLevel, 0, levWidth*levHeight);
     printf("Cleaned level data\n");
     
     numBoxes = 0;
@@ -677,11 +677,7 @@ void initTitleScreen(){
     Pokitto::Display::lineFillers[1] = spritesToLine;
     Pokitto::Display::lineFillers[2] = GUILine;
 
-    // clear the levelmap data, need an empty map for the level select screen
-    int num = levWidth*levHeight;
-    for(int t=0; t<num; t++){
-        curLevel[t] = 0;
-    }
+    memset(curLevel, 0, levWidth*levHeight);
 
     ts.px=0;
     ts.py=80;
