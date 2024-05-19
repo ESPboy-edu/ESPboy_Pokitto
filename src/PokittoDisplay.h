@@ -162,10 +162,10 @@ public:
     static uint8_t palOffset;
     static uint8_t width;
     static uint8_t height;
-    #if PROJ_SCREENMODE != TASMODE
+#if PROJ_SCREENMODE != TASMODE
     //static uint8_t screenbuffer[];
     static uint8_t *screenbuffer;
-    #endif
+#endif
     #if (PROJ_SCREENMODE == MIXMODE)
         static uint8_t subMode; // for mixed mode switching
         static uint8_t scanType[88]; // for mixed screen mode

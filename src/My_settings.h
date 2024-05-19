@@ -49,7 +49,7 @@ Bit Depth: 4 bpp
 Colours: 16
 RAM Usage: 4840 bytes
 */
-//#define PROJ_SCREENMODE MODE_FAST_16COLOR
+#define PROJ_SCREENMODE MODE_FAST_16COLOR
 
 /*
 Mode 13
@@ -73,7 +73,8 @@ Bit Depth: 8 bpp
 Colours: 256
 RAM Usage: Configurable
 */
-#define PROJ_SCREENMODE TASMODE
+//#define PROJ_SCREENMODE TASMODE
+
 #define PROJ_MAX_SPRITES 100
 #define PROJ_TILE_H 16
 #define PROJ_TILE_W 16
