@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include "SuperCrateBox.h"
 #include "platform_Pokitto.h"
+#include "sounds.h"
 
 #include "../libs/LibAudio/LibAudio.h"
-Audio::Sink<3, 300> audio;
+Audio::Sink<3, 8000> audio;
 
 Pokitto::Core pb;
-
 
 /*
 #ifdef ESP8266
@@ -340,7 +340,7 @@ int toScreenY(int y) {
 }
 
 ///////////////////////////////////////////// SOUNDS
-
+/*
 const uint8_t player_damage_sound[] PROGMEM = {0x00, 0x45, 0x5, 0x64, 0x00, 0x00};
 const uint8_t revolver_sound[] PROGMEM = {0x00, 0x45, 0x70, 0x49, 0x1, 0x7C, 0x78, 0x4D, 0x4, 0x2C, 0x00, 0x00};
 const uint8_t grenade_sound[] PROGMEM = {0x00, 0x45, 0x01, 0x2C, 0x00, 0x00};
@@ -354,8 +354,9 @@ const uint8_t enemy_felt_sound[] PROGMEM = {0x80, 0x05, 0x80, 0x01, 0x88, 0x49, 
 const uint8_t shotgun_sound[] PROGMEM = {0x00, 0x45, 0x70, 0x49, 0x3, 0x34, 0x00, 0x00};
 const uint8_t laser_sound[] PROGMEM = {0x00, 0x05, 0x78, 0x4D, 0x78, 0x49, 0x6, 0x70, 0x00, 0x00};
 const uint8_t club_sound[] PROGMEM = {0x80, 0x05, 0x78, 0x4D, 0x78, 0x49, 0x3, 0x18, 0x00, 0x00};
+*/
 
-const uint8_t ok_sound[] PROGMEM = { 1, 110, -6, 11, 126, 2, 0, 150, -25, -3, 47, 3};
+//const uint8_t ok_sound[] PROGMEM = { 1, 110, -6, 11, 126, 2, 0, 150, -25, -3, 47, 3};
 const uint8_t cancel_sound[] PROGMEM = { 1, 120, 3, 8, 126, 2, 0, 130, -13, 10, 169, 3};
 const uint8_t tick_sound[] PROGMEM = { 0, 196, -35, -3, 142, 1};
 
@@ -1738,10 +1739,12 @@ class Weapon {
         case W_MINE :
           break;
         case W_PISTOL :
+          Audio::play(revolver_sound);
+          break;       
         case W_AKIMBO :
         case W_RIFLE :
           ////pb.sound.playTick();
-          Audio::play(tick_sound);
+          Audio::play(machinegun_sound);
           break;
         case W_LASER :
           ////pb.sound.playPattern(laser_sound, 0);
@@ -3252,7 +3255,7 @@ void _init() {
 
 void _gamesetup() {
     pb.begin();
-    pb.setFrameRate(27);
+    pb.setFrameRate(25);
 
     pb.display.loadRGBPalette(palettePico);
     pb.display.setFont(font3x5);
