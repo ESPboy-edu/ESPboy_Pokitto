@@ -2,6 +2,8 @@
 #include "SuperCrateBox.h"
 #include "platform_Pokitto.h"
 #include "sounds.h"
+#include "maintheme.h"
+
 
 #include "../libs/LibAudio/LibAudio.h"
 Audio::Sink<3, 8000> audio;
@@ -1052,6 +1054,7 @@ class World {
           }
           if (pb.buttons.pressed(BTN_C) || pb.buttons.pressed(BTN_B)) {
             mainMenu();
+            Audio::stop<0>();
             ////pb.sound.playOK();
             Audio::play(ok_sound);
           }
@@ -2929,6 +2932,8 @@ void mainMenu() {
   uint8_t menu_selected=0;
   int t_intro=50;
   bool credits=false;
+  auto& music = Audio::play<0>(main_theme);
+  music.setLoop(true);
   while(true)
   {
       if(!pb.update())
@@ -3084,16 +3089,19 @@ void mainMenu() {
 }
 
 void gamePaused() {
+  auto& music = Audio::play<0>(main_theme);
+  music.setLoop(true);
   while (1) {
     if (pb.update()) {
+      PD::update();
       drawAll();
-      #ifdef POKITTO
+      //#ifdef POKITTO
         pb.display.setColor(BLACK);
         pb.display.fillRect(0,30,_LCDWIDTH,25);
         pb.display.setColor(WHITE);
-      #else
-        pb.display.setTextColor(WHITE,BLACK);
-      #endif
+      //#else
+        //pb.display.setTextColor(WHITE,BLACK);
+      //#endif
 
       pb.display.setCursor(32,32);
       pb.display.print("GAME PAUSED");
@@ -3117,6 +3125,7 @@ void gamePaused() {
     ESP.wdtFeed();
     //#endif // PICOBOY
   }
+
 }
 
 void initGame() {
@@ -3250,12 +3259,13 @@ void _init() {
   loadEEPROM();
   //pb.sound.chanVolumes[2] = 1;
   mainMenu();
+  Audio::stop<0>();
   //world.chooseMap();
 }
 
 void _gamesetup() {
     pb.begin();
-    pb.setFrameRate(25);
+    pb.setFrameRate(30);
 
     pb.display.loadRGBPalette(palettePico);
     pb.display.setFont(font3x5);
@@ -3268,6 +3278,7 @@ void _gameloop() {
     if (!pb.update()) return;
     if (pb.buttons.pressed(BTN_C)) {
       gamePaused();
+      Audio::stop<0>();
     }
 
     crate.update();
@@ -3382,6 +3393,7 @@ void _gameloop() {
            // pb.sound.playOK();
            Audio::play(ok_sound);
             mainMenu();
+            Audio::stop<0>();
             break;
           }
         }
