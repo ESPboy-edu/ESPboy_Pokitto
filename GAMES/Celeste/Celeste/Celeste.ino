@@ -13,7 +13,7 @@ void setup() {
     //Serial.begin(74880);
     pb.begin();
     //Pokitto::Sound::ampEnable(true);
-    pb.setFrameRate(50);
+    pb.setFrameRate(30);
 
     pb.display.loadRGBPalette(palettePico);
     pb.display.setInvisibleColor(BLACK);
