@@ -651,6 +651,8 @@ bool spikes_at(int x, int y, int w, int h, int xspd, int yspd)
 
 void draw_time(int x, int y)
 {
+  static char tempText[30];
+  
   int s = seconds;
   int m = minutes % 60;
   int h = minutes / 60;
@@ -665,7 +667,8 @@ void draw_time(int x, int y)
   #endif // POKITTO
 
   pb.display.setCursor(x , y);
-  pb.display.printf("%02d:%02d:%02d", h, m, s);
+  sprintf(tempText, "%02d:%02d:%02d", h, m, s);
+  pb.display.print(tempText);
 }
 
 int level_index()
