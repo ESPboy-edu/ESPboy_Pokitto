@@ -30,14 +30,14 @@ namespace Audio {
           sigmaDeltaDisable();
           interrupts();};
         
-        void attachDAC(){
+     void attachDAC(){
           noInterrupts();
-          sigmaDeltaSetup(0, sampleRate*2);
+          sigmaDeltaSetup(0, 312500); 
           sigmaDeltaAttachPin(D3);
           sigmaDeltaEnable();
           timer1_attachInterrupt(IRQ);
           timer1_enable(TIM_DIV1, TIM_EDGE, TIM_LOOP);
-          timer1_write(80000000 / sampleRate);
+          timer1_write(80000000 / sampleRate); // А вот выборка идет с нужной частотой (8000 Гц)
           interrupts(); 
         };
         

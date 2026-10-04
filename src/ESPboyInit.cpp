@@ -5,19 +5,10 @@ https://hackaday.io/project/164830-espboy-games-iot-stem-for-education-fun
 v1.0
 */
 
+#ifndef ESPboy_Init_cpp
+#define ESPboy_Init_cpp
+
 #include "ESPboyInit.h"
-#include "Pokitto_settings.h"
-
-#if PROJ_SCREENMODE == MODE15_240x240
-  #define DISPLAY240x240
-  #define RES_X 240
-  #define RES_Y 240
-#else
-  #define RES_X 128
-  #define RES_Y 128
-#endif
-
-
 
 ESPboyInit::ESPboyInit(){};
 
@@ -25,21 +16,20 @@ void ESPboyInit::begin(const char *appName) {
   //Serial.begin(115200); //serial init
   WiFi.mode(WIFI_OFF); // to safe battery power
 
-//DAC init and backlit off
-  dac.begin(MCP4725address);
-  delay (100);
-  dac.setVoltage(0, false);
 
 //mcp23017 init for buttons, LED LOCK and TFT Chip Select pins
-  mcp.begin(MCP23017address);
+  mcp.begin();
   delay(100);
   for (int i=0;i<8;i++){  
      mcp.pinMode(i, INPUT);
      mcp.pullUp(i, HIGH);}
 
+//DAC init and backlit off
+  mcp.writeDAC(0, false);
+
 //LED init
-  //myLED.begin(&this->mcp);
-  //myLED.setRGB(0,0,0);
+  myLED.begin(&this->mcp);
+  myLED.setRGB(0,0,0);
 
 //sound init and test
   pinMode(SOUNDPIN, OUTPUT);
@@ -59,25 +49,21 @@ void ESPboyInit::begin(const char *appName) {
   tft.fillScreen(TFT_BLACK);
 
 //draw ESPboylogo  
-  tft.drawXBitmap((RES_X-68)/2, (RES_Y-80)/2, ESPboyLogo, 68, 64, TFT_YELLOW);
+  tft.drawXBitmap(30, 24, ESPboyLogo, 68, 64, TFT_YELLOW);
   tft.setTextSize(1);
-  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-  tft.drawString (appName, (RES_X-(strlen(appName)*6))/2, (RES_Y-80)/2+78);
+  tft.setTextColor(TFT_YELLOW);
+  tft.drawString (appName, (128-(strlen(appName)*6))/2, 102);
 
 //LCD backlit fading on
-#ifndef DISPLAY240x240
-  for (uint16_t bcklt=300; bcklt<4095; bcklt+=30){
-    dac.setVoltage(bcklt, false);
+  for (uint16_t bcklt=300; bcklt<2500; bcklt+=30){
+    mcp.writeDAC(bcklt, false);
     delay(10);}
-#endif
+
   delay(1000);
 
 //clear TFT and backlit on high
-
-#ifndef DISPLAY240x240
-  dac.setVoltage(4095, false);
+  mcp.writeDAC(4095, true);
   tft.fillScreen(TFT_BLACK);
-#endif
 };
 
 
@@ -86,4 +72,15 @@ void ESPboyInit::playTone(uint16_t frq) { tone(SOUNDPIN, frq); }
 
 void ESPboyInit::noPlayTone() { noTone(SOUNDPIN); }
 
-uint8_t ESPboyInit::getKeys() { return (~mcp.readGPIOAB() & 255); }
+uint8_t ESPboyInit::getKeys() { 
+  static uint32_t lastReadMillis = 0;
+  static uint8_t cachedKeys = 0;
+  if (millis() - lastReadMillis >= 20) { 
+    cachedKeys = (~mcp.readGPIOAB() & 255);
+    lastReadMillis = millis();
+  }
+  return cachedKeys; 
+}
+
+
+#endif

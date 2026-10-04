@@ -12,11 +12,11 @@ namespace Audio {
             auto& state = *reinterpret_cast<SFX8Source*>(ptr);
             u32 len = std::min<u32>(512, state.len);
             memcpy(buffer, state.head, len);
-            memset(buffer + len, 127, 512 - len);
+            memset(buffer + len, 128, 512 - len);
             state.head += len;
             state.len -= len;
             if(state.loop == true && state.len == 0) {state.head = state.sourceData; state.len = state.sourceLen;}
-        }
+        };
 
         static void mix(u8 *buffer, void *ptr){
             auto& state = *reinterpret_cast<SFX8Source*>(ptr);
@@ -26,7 +26,7 @@ namespace Audio {
             state.head += len;
             state.len -= len;
             if(state.loop == true && state.len == 0) {state.head = state.sourceData; state.len = state.sourceLen;}
-        }
+        };
 
         static void lowLatencyMix(SFX8Source& state, u32 channel){
             u32 len = state.len;

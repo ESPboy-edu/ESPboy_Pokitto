@@ -184,7 +184,7 @@ void IRAM_ATTR lcdRefreshMode15_240x240(const uint8_t *scrbuf, const uint16_t* p
 };
 
 
-
+/*
 //220x176 fast rescale to 128x128
 void IRAM_ATTR lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* paletteptr){
   
@@ -211,7 +211,62 @@ void IRAM_ATTR lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* palettept
   }
   myESPboy.tft.endWrite();
 };
+*/
 
+
+// 220x176 fast rescale to 128x128 with Anti-Aliasing (2x2 averaging)
+void IRAM_ATTR lcdRefreshMode15(const uint8_t *scrbuf, const uint16_t* paletteptr){
+  
+  static uint16_t *bufLine = NULL;
+  static bool initFlag = false;
+  
+  if(initFlag == false){
+    initFlag = true;
+    bufLine = new uint16_t[128];
+  };
+  
+  myESPboy.tft.setAddrWindow(0, 0, 128, 128);
+  myESPboy.tft.startWrite();
+  
+  for (int yyy = 0; yyy < 128; yyy++){
+    uint32_t sy = (yyy * 176) >> 7;
+    uint32_t row1_offset = sy * 220;
+    uint32_t row2_offset = row1_offset + 220;
+    
+    for(int xxx = 0; xxx < 128; xxx++){
+      uint32_t sx = (xxx * 220) >> 7;
+      
+      // Вычисляем адреса 4-х соседних пикселей (блок 2x2)
+      uint32_t a1 = row1_offset + sx;
+      uint32_t a2 = a1 + 1;
+      uint32_t a3 = row2_offset + sx;
+      uint32_t a4 = a3 + 1;
+
+      // Быстрое извлечение 4-битных индексов без if-else ветвлений!
+      // Сдвиг вычисляется аппаратно: если адрес четный - сдвиг 4 (старший полубайт), если нечетный - 0
+      uint8_t i1 = (scrbuf[a1 >> 1] >> ((~a1 & 1) << 2)) & 0x0F;
+      uint8_t i2 = (scrbuf[a2 >> 1] >> ((~a2 & 1) << 2)) & 0x0F;
+      uint8_t i3 = (scrbuf[a3 >> 1] >> ((~a3 & 1) << 2)) & 0x0F;
+      uint8_t i4 = (scrbuf[a4 >> 1] >> ((~a4 & 1) << 2)) & 0x0F;
+
+      // Получаем цвета из палитры
+      uint16_t c1 = paletteptr[i1];
+      uint16_t c2 = paletteptr[i2];
+      uint16_t c3 = paletteptr[i3];
+      uint16_t c4 = paletteptr[i4];
+
+      // Сверхбыстрое усреднение цветов RGB565 (без расщепления на каналы!)
+      // Используем маску 0xF7DE для предотвращения переполнения битов между каналами R, G, B
+      uint16_t avg12 = (c1 & c2) + (((c1 ^ c2) & 0xF7DE) >> 1);
+      uint16_t avg34 = (c3 & c4) + (((c3 ^ c4) & 0xF7DE) >> 1);
+      
+      // Итоговое усреднение 4-х пикселей и запись в строку дисплея
+      bufLine[xxx] = (avg12 & avg34) + (((avg12 ^ avg34) & 0xF7DE) >> 1);
+    }
+    myESPboy.tft.pushColors(bufLine, 128);
+  }
+  myESPboy.tft.endWrite();
+};
 
 //110x88
 void IRAM_ATTR lcdRefreshMode13(const uint8_t *scrbuf, const uint16_t* paletteptr, uint8_t offset){
@@ -943,6 +998,7 @@ void Display::print(const char str[])
 {
   write(str);
 }
+
 
 void Display::print(char c, int base)
 {

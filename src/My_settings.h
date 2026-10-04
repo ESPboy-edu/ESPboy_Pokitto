@@ -11,7 +11,7 @@ Bit Depth: 4 bpp
 Colours: 16
 RAM Usage: 19360 bytes
 */
-//#define PROJ_SCREENMODE MODE15          
+#define PROJ_SCREENMODE MODE15          
 
 /*
 Mode 15 for 240x240 display
@@ -49,7 +49,7 @@ Bit Depth: 4 bpp
 Colours: 16
 RAM Usage: 4840 bytes
 */
-#define PROJ_SCREENMODE MODE_FAST_16COLOR
+//#define PROJ_SCREENMODE MODE_FAST_16COLOR
 
 /*
 Mode 13
@@ -89,7 +89,7 @@ RAM Usage: Configurable
 #define PROJ_FPS 50
 #define PROJ_HIGH_RAM HIGH_RAM_MUSIC
 #define PROJ_PERSISTENCE true
-#define PROJ_ENABLE_SOUND 0  // 0 = all sound functions disabled DEPRICATED - NO NEED FOR LibAudio
+#define PROJ_ENABLE_SOUND 1  // 0 = all sound functions disabled DEPRICATED - NO NEED FOR LibAudio
 #define PROJ_ENABLE_SYNTH 0 // DEPRICATED - NO NEED FOR LibAudio
 #define POK_ENABLE_SD 0 //NOT USED IN ESPboy
 #define PROJ_AUD_FREQ 8000

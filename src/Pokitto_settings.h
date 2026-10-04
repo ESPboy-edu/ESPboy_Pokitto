@@ -55,7 +55,7 @@
    #define POK_SOUND_BUFFERED PROJ_SOUND_BUFFERED
 
 #ifndef NUM_CHANNELS
-    #define NUM_CHANNELS 2
+    #define NUM_CHANNELS 3
 #endif
 
 #ifndef PROJ_ENABLE_SYNTH

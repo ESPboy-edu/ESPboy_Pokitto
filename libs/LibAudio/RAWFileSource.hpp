@@ -22,7 +22,7 @@ namespace Audio {
         static void copy(u8 *buffer, void*ptr){
             auto& sd = *reinterpret_cast<RAWFileSource*>(ptr);
             if(sd.paused || (sd.offset - sd.start) >= sd.length){
-                memset(buffer, 127, 512);
+                memset(buffer, 128, 512);
                 return;
             }
             s32 rem = 512;
@@ -63,7 +63,7 @@ namespace Audio {
                 if((sd.offset - sd.start) >= sd.length && sd.loop){
                     sd.offset = sd.start;
                 } else {
-                    memset(tmp, 127, rem);
+                    memset(tmp, 128, rem);
                     rem = 0;
                 }
             }
